@@ -1,0 +1,2333 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+
+<meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet">
+
+<title>FFT解析｜計算の理屈を図で理解する</title>
+
+<style>
+
+:root{
+
+  --bg:#f5f7fb;
+
+  --card:#fff;
+
+  --text:#172033;
+
+  --muted:#637083;
+
+  --line:#dbe2ec;
+
+  --blue:#2563eb;
+
+  --orange:#ea580c;
+
+  --green:#16a34a;
+
+  --purple:#7c3aed;
+
+  --red:#dc2626;
+
+}
+
+*{box-sizing:border-box}
+
+html{scroll-behavior:smooth}
+
+body{
+
+  margin:0;
+
+  background:var(--bg);
+
+  color:var(--text);
+
+  font-family:
+
+    -apple-system,
+
+    BlinkMacSystemFont,
+
+    "Segoe UI",
+
+    "Noto Sans JP",
+
+    "Helvetica Neue",
+
+    Arial,
+
+    sans-serif;
+
+  line-height:1.75;
+
+}
+
+.wrap{
+
+  width:min(1100px,calc(100% - 24px));
+
+  margin:auto;
+
+}
+
+.hero{
+
+  padding:54px 0 34px;
+
+  text-align:center;
+
+}
+
+.hero h1{
+
+  margin:0;
+
+  font-size:clamp(32px,6vw,58px);
+
+  letter-spacing:.02em;
+
+}
+
+.hero p{
+
+  margin:10px auto 0;
+
+  color:var(--muted);
+
+  font-size:clamp(15px,2.4vw,20px);
+
+  max-width:720px;
+
+}
+
+.lead{
+
+  font-size:clamp(18px,3vw,26px);
+
+  font-weight:800;
+
+  margin:24px auto 0;
+
+}
+
+.lead .sin{color:var(--blue)}
+
+.lead .cos{color:var(--orange)}
+
+section{
+
+  background:var(--card);
+
+  border:1px solid var(--line);
+
+  border-radius:18px;
+
+  padding:clamp(18px,4vw,34px);
+
+  margin:0 0 20px;
+
+  box-shadow:0 8px 28px rgba(30,45,70,.05);
+
+}
+
+h2{
+
+  font-size:clamp(23px,4vw,34px);
+
+  margin:0 0 8px;
+
+  line-height:1.35;
+
+}
+
+h3{
+
+  font-size:20px;
+
+  margin:26px 0 8px;
+
+}
+
+.sub{
+
+  color:var(--muted);
+
+  margin:0 0 22px;
+
+}
+
+.num{
+
+  display:inline-grid;
+
+  place-items:center;
+
+  width:34px;
+
+  height:34px;
+
+  border-radius:50%;
+
+  background:#172033;
+
+  color:white;
+
+  font-size:18px;
+
+  margin-right:8px;
+
+}
+
+.eq{
+
+  overflow:auto;
+
+  text-align:center;
+
+  background:#f8fafc;
+
+  border:1px solid var(--line);
+
+  border-radius:13px;
+
+  padding:15px 10px;
+
+  margin:14px 0;
+
+  font-family:"Times New Roman",serif;
+
+  font-size:clamp(18px,3vw,27px);
+
+  white-space:nowrap;
+
+}
+
+.note{
+
+  background:#eff6ff;
+
+  border-left:5px solid var(--blue);
+
+  padding:13px 16px;
+
+  border-radius:8px;
+
+  margin:16px 0;
+
+}
+
+.key{
+
+  font-weight:800;
+
+  color:var(--blue);
+
+}
+
+.grid2{
+
+  display:grid;
+
+  grid-template-columns:1fr 1fr;
+
+  gap:16px;
+
+}
+
+.wave-card{
+
+  border:1px solid var(--line);
+
+  border-radius:14px;
+
+  padding:14px;
+
+}
+
+.wave-title{
+
+  font-weight:800;
+
+  text-align:center;
+
+  margin-bottom:5px;
+
+}
+
+.canvas-wrap{
+
+  position:relative;
+
+  width:100%;
+
+  aspect-ratio:2.25/1;
+
+}
+
+.canvas-wrap canvas{
+
+  position:absolute;
+
+  inset:0;
+
+  width:100%;
+
+  height:100%;
+
+}
+
+.plus{
+
+  text-align:center;
+
+  font-size:36px;
+
+  font-weight:900;
+
+  margin:-4px 0;
+
+}
+
+.arrow{
+
+  text-align:center;
+
+  font-size:32px;
+
+  color:var(--muted);
+
+  margin:4px 0;
+
+}
+
+.controls{
+
+  display:grid;
+
+  grid-template-columns:repeat(3,1fr);
+
+  gap:10px;
+
+  margin:15px 0;
+
+}
+
+.control{
+
+  background:#f8fafc;
+
+  border:1px solid var(--line);
+
+  border-radius:12px;
+
+  padding:10px;
+
+}
+
+.control label{
+
+  display:block;
+
+  font-size:13px;
+
+  color:var(--muted);
+
+}
+
+.control input{
+
+  width:100%;
+
+}
+
+.control strong{
+
+  display:block;
+
+  text-align:center;
+
+}
+
+.match-grid{
+
+  display:grid;
+
+  grid-template-columns:1fr auto 1fr;
+
+  align-items:center;
+
+  gap:12px;
+
+}
+
+.operator{
+
+  font-size:36px;
+
+  font-weight:900;
+
+}
+
+.product{
+
+  background:#f8fafc;
+
+  border-radius:12px;
+
+  border:1px solid var(--line);
+
+  padding:12px;
+
+  margin-top:12px;
+
+}
+
+.sumline{
+
+  text-align:center;
+
+  font-weight:800;
+
+  font-size:18px;
+
+  margin-top:8px;
+
+}
+
+.big-result{
+
+  text-align:center;
+
+  font-size:clamp(24px,4vw,38px);
+
+  font-weight:900;
+
+  color:var(--green);
+
+}
+
+.xy{
+
+  display:grid;
+
+  grid-template-columns:1fr 1fr;
+
+  gap:14px;
+
+}
+
+.xy .box{
+
+  border-radius:14px;
+
+  padding:16px;
+
+  border:1px solid var(--line);
+
+  background:#f8fafc;
+
+}
+
+.xy .box:first-child{
+
+  border-top:4px solid var(--blue);
+
+}
+
+.xy .box:last-child{
+
+  border-top:4px solid var(--orange);
+
+}
+
+.sqrt{
+
+  font-size:clamp(22px,4vw,34px);
+
+  font-weight:800;
+
+  text-align:center;
+
+  padding:16px;
+
+  background:#f0fdf4;
+
+  border:1px solid #bbf7d0;
+
+  border-radius:14px;
+
+}
+
+.steps{
+
+  display:flex;
+
+  align-items:stretch;
+
+  gap:8px;
+
+}
+
+.step{
+
+  flex:1;
+
+  text-align:center;
+
+  border:1px solid var(--line);
+
+  border-radius:12px;
+
+  padding:12px 8px;
+
+  background:#f8fafc;
+
+  font-weight:700;
+
+}
+
+.chev{
+
+  align-self:center;
+
+  font-size:24px;
+
+  color:var(--muted);
+
+}
+
+.spectrum{
+
+  height:260px;
+
+  display:flex;
+
+  align-items:flex-end;
+
+  gap:clamp(8px,2vw,24px);
+
+  padding:25px 12px 38px 42px;
+
+  border-left:2px solid #111827;
+
+  border-bottom:2px solid #111827;
+
+  position:relative;
+
+  margin:20px 5px 8px;
+
+}
+
+.spectrum:before{
+
+  content:"大きさ";
+
+  position:absolute;
+
+  left:-2px;
+
+  top:-12px;
+
+  font-size:13px;
+
+}
+
+.spectrum:after{
+
+  content:"周波数 →";
+
+  position:absolute;
+
+  right:0;
+
+  bottom:-32px;
+
+  font-size:13px;
+
+}
+
+.barwrap{
+
+  flex:1;
+
+  height:100%;
+
+  display:flex;
+
+  align-items:flex-end;
+
+  justify-content:center;
+
+  position:relative;
+
+}
+
+.bar{
+
+  width:min(34px,55%);
+
+  border-radius:6px 6px 0 0;
+
+  transition:.2s;
+
+}
+
+.barwrap span{
+
+  position:absolute;
+
+  bottom:-30px;
+
+  font-size:12px;
+
+  white-space:nowrap;
+
+}
+
+.b1{background:var(--blue)}
+
+.b2{background:var(--orange)}
+
+.b3{background:var(--green)}
+
+.fast{
+
+  display:grid;
+
+  grid-template-columns:1fr 1fr;
+
+  gap:15px;
+
+}
+
+.fast>div{
+
+  padding:16px;
+
+  border-radius:14px;
+
+  border:1px solid var(--line);
+
+}
+
+.fast strong{
+
+  font-size:20px;
+
+}
+
+.good{background:#f0fdf4}
+
+.normal{background:#f8fafc}
+
+.summary{
+
+  background:#172033;
+
+  color:white;
+
+}
+
+.summary h2{
+
+  color:white;
+
+}
+
+.summary-grid{
+
+  display:grid;
+
+  grid-template-columns:repeat(3,1fr);
+
+  gap:12px;
+
+}
+
+.summary-grid div{
+
+  background:rgba(255,255,255,.08);
+
+  border:1px solid rgba(255,255,255,.15);
+
+  border-radius:13px;
+
+  padding:15px;
+
+}
+
+.summary-grid b{
+
+  display:block;
+
+  font-size:17px;
+
+  margin-bottom:5px;
+
+}
+
+.footer{
+
+  text-align:center;
+
+  color:var(--muted);
+
+  font-size:12px;
+
+  padding:8px 0 40px;
+
+}
+
+@media(max-width:720px){
+
+  .grid2,
+
+  .xy,
+
+  .fast,
+
+  .summary-grid{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .match-grid{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .operator{
+
+    text-align:center;
+
+  }
+
+  .controls{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .steps{
+
+    flex-direction:column;
+
+  }
+
+  .chev{
+
+    transform:rotate(90deg);
+
+  }
+
+  section{
+
+    border-radius:14px;
+
+  }
+
+  .spectrum{
+
+    height:220px;
+
+  }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="wrap">
+
+<header class="hero">
+
+  <h1>FFT解析</h1>
+
+  <p>
+
+    難しい公式を覚える前に、
+
+    「なぜ周波数が分かるのか」を計算のイメージから理解する。
+
+  </p>
+
+  <div class="lead">
+
+    波形は、いろいろな周波数の
+
+    <span class="sin">sin</span>・
+
+    <span class="cos">cos</span>
+
+    の足し算
+
+  </div>
+
+</header>
+
+<section>
+
+<h2>
+
+  <span class="num">1</span>
+
+  複雑な波形は、単純な波の足し算
+
+</h2>
+
+<p class="sub">
+
+  周波数や大きさの違う sin・cos を重ねると、
+
+  複雑な時間波形を作ることができます。
+
+</p>
+
+<div class="grid2">
+
+  <div>
+
+    <div class="wave-card">
+
+      <div class="wave-title" style="color:var(--blue)">
+
+        10 Hz の sin 波
+
+      </div>
+
+      <div class="canvas-wrap">
+
+        <canvas id="wave1"></canvas>
+
+      </div>
+
+    </div>
+
+    <div class="plus">＋</div>
+
+    <div class="wave-card">
+
+      <div class="wave-title" style="color:var(--orange)">
+
+        25 Hz の cos 波
+
+      </div>
+
+      <div class="canvas-wrap">
+
+        <canvas id="wave2"></canvas>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="wave-card">
+
+    <div class="wave-title">
+
+      足し合わせた波形
+
+    </div>
+
+    <div class="canvas-wrap" style="aspect-ratio:1.08/1">
+
+      <canvas id="combined"></canvas>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div class="eq">
+
+x(t) = A₁ sin(2πf₁t) + B₁ cos(2πf₂t) + …
+
+</div>
+
+<div class="note">
+
+フーリエ変換は、この考え方を
+
+<strong>逆向き</strong>
+
+に使います。
+
+複雑な波形を見て
+
+<strong>
+
+「何 Hz の sin・cos が、どれくらい入っている？」
+
+</strong>
+
+を調べます。
+
+</div>
+
+</section>
+
+<section>
+
+<h2>
+
+  <span class="num">2</span>
+
+  どうやって周波数を見つける？
+
+</h2>
+
+<p class="sub">
+
+調べたい周波数の波を用意して、
+
+元の波形と
+
+<strong>1点ずつ掛け算</strong>
+
+し、その結果を全部足します。
+
+</p>
+
+<div class="controls">
+
+ <div class="control">
+
+   <label>
+
+     元の波形
+
+   </label>
+
+   <strong>
+
+     10 Hz
+
+   </strong>
+
+ </div>
+
+ <div class="control">
+
+   <label for="testFreq">
+
+     試す周波数
+
+   </label>
+
+   <input
+
+     id="testFreq"
+
+     type="range"
+
+     min="5"
+
+     max="30"
+
+     step="1"
+
+     value="10"
+
+   >
+
+   <strong>
+
+     <span id="freqText">10</span> Hz
+
+   </strong>
+
+ </div>
+
+ <div class="control">
+
+   <label>
+
+     掛け算の合計
+
+   </label>
+
+   <strong id="scoreText">
+
+     —
+
+   </strong>
+
+ </div>
+
+</div>
+
+<div class="match-grid">
+
+ <div class="wave-card">
+
+   <div class="wave-title">
+
+     元の波形 x[n]
+
+   </div>
+
+   <div class="canvas-wrap">
+
+     <canvas id="original"></canvas>
+
+   </div>
+
+ </div>
+
+ <div class="operator">
+
+   ×
+
+ </div>
+
+ <div class="wave-card">
+
+   <div
+
+     class="wave-title"
+
+     id="trialTitle"
+
+   >
+
+     試す sin 波：10 Hz
+
+   </div>
+
+   <div class="canvas-wrap">
+
+     <canvas id="trial"></canvas>
+
+   </div>
+
+ </div>
+
+</div>
+
+<div class="product">
+
+  <div class="wave-title">
+
+    1点ずつ掛け算した結果
+
+  </div>
+
+  <div class="canvas-wrap">
+
+    <canvas id="product"></canvas>
+
+  </div>
+
+  <div class="sumline">
+
+    掛け算した値を、最後に全部足す
+
+  </div>
+
+</div>
+
+<div
+
+  id="matchMessage"
+
+  class="big-result"
+
+></div>
+
+<div class="note">
+
+<strong>同じ周波数</strong>
+
+なら、プラスの値が多く残って
+
+合計が大きくなります。
+
+<strong>違う周波数</strong>
+
+なら、プラスとマイナスが打ち消し合い、
+
+合計は小さくなります。
+
+</div>
+
+</section>
+
+<section>
+
+<h2>
+
+  <span class="num">3</span>
+
+  なぜ sin と cos の両方を使う？
+
+</h2>
+
+<p class="sub">
+
+同じ周波数でも、
+
+波の始まる位置（位相）が違うからです。
+
+</p>
+
+<div class="grid2">
+
+ <div class="wave-card">
+
+   <div class="wave-title">
+
+     sin 波
+
+   </div>
+
+   <div class="canvas-wrap">
+
+     <canvas id="sinphase"></canvas>
+
+   </div>
+
+ </div>
+
+ <div class="wave-card">
+
+   <div class="wave-title">
+
+     cos 波
+
+   </div>
+
+   <div class="canvas-wrap">
+
+     <canvas id="cosphase"></canvas>
+
+   </div>
+
+ </div>
+
+</div>
+
+<p>
+
+sin と cos は同じ周波数でも、
+
+波の位置が 1/4 周期ずれています。
+
+そこで、ある周波数について
+
+両方との一致具合を調べます。
+
+</p>
+
+<div class="xy">
+
+ <div class="box">
+
+   <strong style="color:var(--blue)">
+
+     cos 方向の成分
+
+   </strong>
+
+   <div class="eq">
+
+     C[k] = Σ x[n] cos(2πkn/N)
+
+   </div>
+
+ </div>
+
+ <div class="box">
+
+   <strong style="color:var(--orange)">
+
+     sin 方向の成分
+
+   </strong>
+
+   <div class="eq">
+
+     S[k] = −Σ x[n] sin(2πkn/N)
+
+   </div>
+
+ </div>
+
+</div>
+
+<div class="arrow">
+
+↓
+
+</div>
+
+<div class="sqrt">
+
+その周波数の大きさ
+
+＝
+
+√( C[k]² ＋ S[k]² )
+
+</div>
+
+<p
+
+  class="sub"
+
+  style="margin-top:12px"
+
+>
+
+※ FFTの正規化方法によって、
+
+実際の振幅へ換算するときの係数は変わります。
+
+ここでは
+
+「周波数成分を見つける仕組み」
+
+に注目しています。
+
+</p>
+
+</section>
+
+<section>
+
+<h2>
+
+  <span class="num">4</span>
+
+  DFTの式を分解して見る
+
+</h2>
+
+<p class="sub">
+
+よく見る式も、
+
+中身は今まで説明した
+
+「sin・cosを掛けて足す」
+
+です。
+
+</p>
+
+<div class="eq">
+
+X[k]
+
+=
+
+Σ<sub>n=0</sub><sup>N−1</sup>
+
+x[n]
+
+e<sup>−j2πkn/N</sup>
+
+</div>
+
+<p>
+
+ここで、オイラーの公式
+
+</p>
+
+<div class="eq">
+
+e<sup>−jθ</sup>
+
+=
+
+cos θ − j sin θ
+
+</div>
+
+<p>
+
+を入れると、
+
+</p>
+
+<div class="eq">
+
+X[k]
+
+=
+
+Σ x[n] cos(2πkn/N)
+
+− j
+
+Σ x[n] sin(2πkn/N)
+
+</div>
+
+<div class="steps">
+
+ <div class="step">
+
+   元のデータ
+
+   <br>
+
+   x[n]
+
+ </div>
+
+ <div class="chev">
+
+   →
+
+ </div>
+
+ <div class="step">
+
+   調べたい周波数の
+
+   <br>
+
+   cos・sin を掛ける
+
+ </div>
+
+ <div class="chev">
+
+   →
+
+ </div>
+
+ <div class="step">
+
+   それぞれ
+
+   <br>
+
+   全部足す
+
+ </div>
+
+ <div class="chev">
+
+   →
+
+ </div>
+
+ <div class="step">
+
+   その周波数の
+
+   <br>
+
+   成分 X[k]
+
+ </div>
+
+</div>
+
+<h3>
+
+記号の意味
+
+</h3>
+
+<p>
+
+<strong>x[n]</strong>
+
+：測定した n 番目のデータ
+
+／
+
+<strong>N</strong>
+
+：データ数
+
+／
+
+<strong>k</strong>
+
+：調べる周波数の番号
+
+／
+
+<strong>X[k]</strong>
+
+：その周波数に含まれる成分
+
+</p>
+
+</section>
+
+<section>
+
+<h2>
+
+  <span class="num">5</span>
+
+  これを周波数ごとに繰り返す
+
+</h2>
+
+<p class="sub">
+
+低い周波数から高い周波数まで
+
+同じ計算をすると、
+
+「どの周波数をどれだけ含むか」
+
+が並びます。
+
+</p>
+
+<div class="spectrum">
+
+ <div class="barwrap">
+
+   <div
+
+     class="bar b1"
+
+     style="height:18%"
+
+   ></div>
+
+   <span>
+
+     5 Hz
+
+   </span>
+
+ </div>
+
+ <div class="barwrap">
+
+   <div
+
+     class="bar b1"
+
+     style="height:92%"
+
+   ></div>
+
+   <span>
+
+     10 Hz
+
+   </span>
+
+ </div>
+
+ <div class="barwrap">
+
+   <div
+
+     class="bar b1"
+
+     style="height:8%"
+
+   ></div>
+
+   <span>
+
+     15 Hz
+
+   </span>
+
+ </div>
+
+ <div class="barwrap">
+
+   <div
+
+     class="bar b2"
+
+     style="height:58%"
+
+   ></div>
+
+   <span>
+
+     25 Hz
+
+   </span>
+
+ </div>
+
+ <div class="barwrap">
+
+   <div
+
+     class="bar b1"
+
+     style="height:5%"
+
+   ></div>
+
+   <span>
+
+     30 Hz
+
+   </span>
+
+ </div>
+
+</div>
+
+<div class="note">
+
+この例なら
+
+<strong>
+
+「10 Hz が大きく、25 Hz も含まれている」
+
+</strong>
+
+と読み取れます。
+
+これが
+
+<strong>
+
+周波数スペクトル
+
+</strong>
+
+です。
+
+</div>
+
+</section>
+
+<section>
+
+<h2>
+
+  <span class="num">6</span>
+
+  DFTとFFTは何が違う？
+
+</h2>
+
+<div class="fast">
+
+ <div class="normal">
+
+   <strong>
+
+     DFT
+
+   </strong>
+
+   <p>
+
+各周波数について、
+
+sin・cosとの掛け算と足し算を
+
+そのまま計算する考え方。
+
+   </p>
+
+   <div class="eq">
+
+     計算量 ≈ N²
+
+   </div>
+
+ </div>
+
+ <div class="good">
+
+   <strong>
+
+     FFT
+
+   </strong>
+
+   <p>
+
+DFTの計算には
+
+同じような計算が何度も出てくるため、
+
+それをまとめて再利用して高速化します。
+
+   </p>
+
+   <div class="eq">
+
+     計算量 ≈ N log₂N
+
+   </div>
+
+ </div>
+
+</div>
+
+<div class="note">
+
+<strong>
+
+FFTは別の変換ではありません。
+
+</strong>
+
+DFTと同じ結果を、
+
+計算の重複を利用して
+
+高速に求めるアルゴリズムです。
+
+</div>
+
+</section>
+
+<section class="summary">
+
+<h2>
+
+まとめ
+
+</h2>
+
+<div class="summary-grid">
+
+ <div>
+
+   <b>
+
+     ① 波形を考える
+
+   </b>
+
+複雑な波形は、
+
+いろいろな周波数の
+
+sin・cos の足し算で表せる。
+
+ </div>
+
+ <div>
+
+   <b>
+
+     ② 掛けて足す
+
+   </b>
+
+各周波数の sin・cos を掛けて
+
+全部足すと、
+
+その周波数がどれくらい含まれるか分かる。
+
+ </div>
+
+ <div>
+
+   <b>
+
+     ③ FFTで高速化
+
+   </b>
+
+全周波数について行うDFTの計算を、
+
+同じ結果のまま
+
+効率よく計算するのがFFT。
+
+ </div>
+
+</div>
+
+</section>
+
+<div class="footer">
+
+このページは検索エンジンへの登録を拒否する
+
+noindex を設定しています。
+
+</div>
+
+</div>
+
+<script>
+
+const DPR =
+
+  Math.max(
+
+    1,
+
+    window.devicePixelRatio || 1
+
+  );
+
+function setup(id){
+
+  const c =
+
+    document.getElementById(id);
+
+  const r =
+
+    c.getBoundingClientRect();
+
+  c.width =
+
+    Math.max(
+
+      1,
+
+      Math.round(r.width * DPR)
+
+    );
+
+  c.height =
+
+    Math.max(
+
+      1,
+
+      Math.round(r.height * DPR)
+
+    );
+
+  const x =
+
+    c.getContext('2d');
+
+  x.setTransform(
+
+    DPR,
+
+    0,
+
+    0,
+
+    DPR,
+
+    0,
+
+    0
+
+  );
+
+  return{
+
+    c,
+
+    x,
+
+    w:r.width,
+
+    h:r.height
+
+  };
+
+}
+
+function plot(
+
+  id,
+
+  fn,
+
+  color='#2563eb',
+
+  opts={}
+
+){
+
+  const {
+
+    x,
+
+    w,
+
+    h
+
+  } = setup(id);
+
+  x.clearRect(
+
+    0,
+
+    0,
+
+    w,
+
+    h
+
+  );
+
+  const pad = 10;
+
+  const mid = h / 2;
+
+  x.strokeStyle =
+
+    '#dbe2ec';
+
+  x.lineWidth = 1;
+
+  x.beginPath();
+
+  x.moveTo(
+
+    pad,
+
+    mid
+
+  );
+
+  x.lineTo(
+
+    w-pad,
+
+    mid
+
+  );
+
+  x.stroke();
+
+  x.strokeStyle =
+
+    color;
+
+  x.lineWidth =
+
+    2.3;
+
+  x.beginPath();
+
+  const N = 320;
+
+  for(
+
+    let i=0;
+
+    i<N;
+
+    i++
+
+  ){
+
+    const t =
+
+      i/(N-1);
+
+    const v =
+
+      fn(t);
+
+    const px =
+
+      pad
+
+      +
+
+      t*(w-2*pad);
+
+    const py =
+
+      mid
+
+      -
+
+      v*(h*.36);
+
+    if(i){
+
+      x.lineTo(
+
+        px,
+
+        py
+
+      );
+
+    }else{
+
+      x.moveTo(
+
+        px,
+
+        py
+
+      );
+
+    }
+
+  }
+
+  x.stroke();
+
+  if(opts.second){
+
+    x.strokeStyle =
+
+      opts.second.color;
+
+    x.lineWidth =
+
+      2;
+
+    x.setLineDash(
+
+      [6,5]
+
+    );
+
+    x.beginPath();
+
+    for(
+
+      let i=0;
+
+      i<N;
+
+      i++
+
+    ){
+
+      const t =
+
+        i/(N-1);
+
+      const v =
+
+        opts.second.fn(t);
+
+      const px =
+
+        pad
+
+        +
+
+        t*(w-2*pad);
+
+      const py =
+
+        mid
+
+        -
+
+        v*(h*.36);
+
+      if(i){
+
+        x.lineTo(
+
+          px,
+
+          py
+
+        );
+
+      }else{
+
+        x.moveTo(
+
+          px,
+
+          py
+
+        );
+
+      }
+
+    }
+
+    x.stroke();
+
+    x.setLineDash([]);
+
+  }
+
+}
+
+const cycles =
+
+  f =>
+
+  t =>
+
+  Math.sin(
+
+    2*Math.PI*f*t
+
+  );
+
+function basePlots(){
+
+  plot(
+
+    'wave1',
+
+    cycles(2),
+
+    '#2563eb'
+
+  );
+
+  plot(
+
+    'wave2',
+
+    t =>
+
+      .7 *
+
+      Math.cos(
+
+        2*Math.PI*5*t
+
+      ),
+
+    '#ea580c'
+
+  );
+
+  plot(
+
+    'combined',
+
+    t =>
+
+      .75 *
+
+      Math.sin(
+
+        2*Math.PI*2*t
+
+      )
+
+      +
+
+      .4 *
+
+      Math.cos(
+
+        2*Math.PI*5*t
+
+      ),
+
+    '#172033'
+
+  );
+
+  plot(
+
+    'sinphase',
+
+    cycles(2),
+
+    '#2563eb'
+
+  );
+
+  plot(
+
+    'cosphase',
+
+    t =>
+
+      Math.cos(
+
+        2*Math.PI*2*t
+
+      ),
+
+    '#ea580c'
+
+  );
+
+}
+
+function updateMatch(){
+
+  const f =
+
+    +document
+
+      .getElementById(
+
+        'testFreq'
+
+      )
+
+      .value;
+
+  document
+
+    .getElementById(
+
+      'freqText'
+
+    )
+
+    .textContent =
+
+    f;
+
+  document
+
+    .getElementById(
+
+      'trialTitle'
+
+    )
+
+    .textContent =
+
+    `試す sin 波：${f} Hz`;
+
+  const samples =
+
+    500;
+
+  const seconds =
+
+    .2;
+
+  let sum =
+
+    0;
+
+  let abs =
+
+    0;
+
+  const orig =
+
+    t =>
+
+    Math.sin(
+
+      2 *
+
+      Math.PI *
+
+      10 *
+
+      (t*seconds)
+
+    );
+
+  const trial =
+
+    t =>
+
+    Math.sin(
+
+      2 *
+
+      Math.PI *
+
+      f *
+
+      (t*seconds)
+
+    );
+
+  for(
+
+    let n=0;
+
+    n<samples;
+
+    n++
+
+  ){
+
+    const t =
+
+      n/(samples-1);
+
+    const p =
+
+      orig(t) *
+
+      trial(t);
+
+    sum += p;
+
+    abs +=
+
+      Math.abs(p);
+
+  }
+
+  const score =
+
+    sum/samples;
+
+  document
+
+    .getElementById(
+
+      'scoreText'
+
+    )
+
+    .textContent =
+
+    score.toFixed(3);
+
+  document
+
+    .getElementById(
+
+      'matchMessage'
+
+    )
+
+    .textContent =
+
+    Math.abs(f-10)<.01
+
+    ?
+
+    '同じ 10 Hz → 大きな値が残る！'
+
+    :
+
+    '周波数が違う → ＋と−が打ち消し合う';
+
+  document
+
+    .getElementById(
+
+      'matchMessage'
+
+    )
+
+    .style.color =
+
+    Math.abs(f-10)<.01
+
+    ?
+
+    '#16a34a'
+
+    :
+
+    '#637083';
+
+  plot(
+
+    'original',
+
+    orig,
+
+    '#172033'
+
+  );
+
+  plot(
+
+    'trial',
+
+    trial,
+
+    '#2563eb'
+
+  );
+
+  plot(
+
+    'product',
+
+    t =>
+
+      orig(t) *
+
+      trial(t),
+
+    '#7c3aed'
+
+  );
+
+}
+
+function render(){
+
+  basePlots();
+
+  updateMatch();
+
+}
+
+document
+
+  .getElementById(
+
+    'testFreq'
+
+  )
+
+  .addEventListener(
+
+    'input',
+
+    updateMatch
+
+  );
+
+let rt;
+
+window.addEventListener(
+
+  'resize',
+
+  () => {
+
+    clearTimeout(rt);
+
+    rt =
+
+      setTimeout(
+
+        render,
+
+        120
+
+      );
+
+  }
+
+);
+
+render();
+
+</script>
+
+</body>
+
+</html>
