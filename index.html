@@ -61,12 +61,13 @@ h1{font-size:47px;line-height:1.16;margin:11px 0 15px;letter-spacing:.02em}h2{fo
 #aliasNote{min-height:20px;margin:5px 0}.control{padding:8px 12px}.control input{accent-color:var(--blue);cursor:pointer}
 @media print{.slide-content{transform-origin:top left}}
 select{width:100%;padding:7px;border:1px solid #bccadb;border-radius:6px;background:white;color:#152238;font:inherit}
+.purpose{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0 14px}.purpose>div{padding:10px 13px;background:#eef5ff;border-left:4px solid #2365d8;font-size:14px}.purpose b{display:block;font-size:16px;margin-bottom:4px}
 </style>
 </head>
 <body>
 <main class="deck">
 
-<div class="frame"><section class="slide" data-page="1 / 16">
+<div class="frame"><section class="slide" data-page="1 / 21">
   <div class="hero">
     <div>
       <div class="eyebrow">FOURIER / DFT / FFT</div>
@@ -90,7 +91,7 @@ select{width:100%;padding:7px;border:1px solid #bccadb;border-radius:6px;backgro
   <div class="footerline">※ このページは学習用。実測ではセンサ帯域・アンチエイリアシングフィルタ・窓関数なども考慮する。</div>
 </section></div>
 
-<div class="frame" id="basic"><section class="slide" data-page="2 / 16">
+<div class="frame" id="basic"><section class="slide" data-page="2 / 21">
   <h2>1. 波形は sin・cos の足し算で表せる</h2>
   <p class="sub">フーリエ解析の出発点。複雑な周期波形も、周波数の違う正弦・余弦成分に分けて考えられます。</p>
   <div class="grid2">
@@ -107,7 +108,7 @@ select{width:100%;padding:7px;border:1px solid #bccadb;border-radius:6px;backgro
   <div class="note" style="margin-top:14px"><b>FFTは逆向きに考える：</b>「この複雑な波形には、100 Hzがどれだけ？ 200 Hzがどれだけ？」を求める。</div>
 </section></div>
 
-<div class="frame"><section class="slide" data-page="3 / 16">
+<div class="frame"><section class="slide" data-page="3 / 21">
   <h2>2. なぜ「掛けて、全部足す」と周波数が分かる？</h2>
   <p class="sub">同じ周波数のsin・cosとの積和から成分を取り出します。異なるDFTビンの基底は、N点全体で正負が打ち消し合います。</p>
   <div class="grid2">
@@ -118,7 +119,7 @@ select{width:100%;padding:7px;border:1px solid #bccadb;border-radius:6px;backgro
   <div class="flow"><div class="step"><b>元の波形</b>x[n]</div><div class="fa">×</div><div class="step"><b>試す波</b>sin / cos</div><div class="fa">→</div><div class="step"><b>全部足す</b>Σ</div><div class="fa">→</div><div class="step"><b>一致度</b>周波数成分</div></div>
 </section></div>
 
-<div class="frame"><section class="slide" data-page="4 / 16">
+<div class="frame"><section class="slide" data-page="4 / 21">
   <h2>3. DFTの式は「cos と sin を掛けて足す」をまとめたもの</h2>
   <p class="sub">難しそうに見える複素指数も、オイラーの公式で分ければ中身は同じです。</p>
   <div class="eq big">X[k] = Σ<sub>n=0</sub><sup>N−1</sup> x[n] e<sup>−j2πkn/N</sup></div>
@@ -132,7 +133,7 @@ select{width:100%;padding:7px;border:1px solid #bccadb;border-radius:6px;backgro
   <div class="note" style="margin-top:15px"><b>|X[k]| = √(Re² + Im²)</b> はDFT係数の大きさ。窓なし・ビン一致の正弦波の片側振幅は通常 <b>2|X[k]|/N</b>（DC・偶数Nのナイキストは |X[k]|/N）。位相は <b>atan2(Im, Re)</b>、j²=−1。</div>
 </section></div>
 
-<div class="frame"><section class="slide" data-page="5 / 16">
+<div class="frame"><section class="slide" data-page="5 / 21">
   <h2>4-1. DFTとFFTの違い</h2>
   <p class="sub">FFTは「別の変換」ではありません。DFTと同じ結果を、対称性・周期性などを利用して高速に求める計算法です。</p>
   <div class="distinguish">
@@ -143,7 +144,7 @@ select{width:100%;padding:7px;border:1px solid #bccadb;border-radius:6px;backgro
   <div class="note" style="margin-top:16px">FFT点数を必ず1024・2048・4096にする必要はありません。ただし高速化しやすい長さがあり、2の累乗は代表例です。</div>
 </section></div>
 
-<div class="frame"><section class="slide" data-page="6 / 16">
+<div class="frame"><section class="slide" data-page="6 / 21">
 <h2>4-2. FFTは、どの計算を使い回す？</h2>
 <p class="sub">代表的なradix-2 FFT：データを偶数番・奇数番に分け、小さなDFTの答えを再利用します。</p>
 <div class="grid2"><div class="card blue"><h3>① N点を2つのN/2点へ</h3><p>E[k]：x[0], x[2], x[4]… のDFT<br>O[k]：x[1], x[3], x[5]… のDFT</p><div class="eq smallEq">W<sub>N</sub><sup>k</sup> = e<sup>−j2πk/N</sup></div></div>
@@ -154,7 +155,7 @@ select{width:100%;padding:7px;border:1px solid #bccadb;border-radius:6px;backgro
 <div class="note greennote">省くのは情報ではなく、重複する計算。数学的には同じDFTであり、実装による丸め誤差はあり得ます。</div>
 </section></div>
 
-<div class="frame" id="sampling"><section class="slide" data-page="7 / 16">
+<div class="frame" id="sampling"><section class="slide" data-page="7 / 21">
   <h2>5. サンプリング数は「何Hzまで」「何Hz刻みで」で決める</h2>
   <p class="sub">必要なのはサンプリング周波数 fₛ とサンプル数 N の両方です。</p>
   <div class="grid3">
@@ -166,7 +167,7 @@ select{width:100%;padding:7px;border:1px solid #bccadb;border-radius:6px;backgro
   <table class="table" style="margin-top:14px"><tr><th>fₛ</th><th>N</th><th>記録時間 T</th><th>Δf</th></tr><tr><td>2560 Hz</td><td>1024</td><td>0.4 s</td><td>2.5 Hz</td></tr><tr><td>2560 Hz</td><td>2048</td><td>0.8 s</td><td>1.25 Hz</td></tr><tr><td>2560 Hz</td><td>4096</td><td>1.6 s</td><td>0.625 Hz</td></tr></table><p class="small">ここではゼロ追加なし。Δfはビン間隔であり、近接した2成分を分離できるかは窓関数・振幅差・雑音にも依存します。</p>
 </section></div>
 
-<div class="frame"><section class="slide" data-page="8 / 16">
+<div class="frame"><section class="slide" data-page="8 / 21">
   <h2>6. なぜ「2倍より速く」サンプリングする必要がある？</h2>
   <p class="sub">ここでは0 Hzから最高周波数までの信号を扱います。任意の位相の正弦波を区別するには fₛ>2fmax。ちょうど2倍では、位相によって情報を失います。</p>
   <div class="grid2">
@@ -177,7 +178,7 @@ select{width:100%;padding:7px;border:1px solid #bccadb;border-radius:6px;backgro
   <div class="eq big" style="margin-top:16px">f<sub>max</sub> &lt; fₛ / 2　⇔　fₛ &gt; 2 f<sub>max</sub></div>
 </section></div>
 
-<div class="frame" id="alias"><section class="slide" data-page="9 / 16">
+<div class="frame" id="alias"><section class="slide" data-page="9 / 21">
 <h2>7. バーを動かして、折り返しを確かめる</h2>
 <p class="sub">橙＝実際の入力波形、青＝同じサンプリング点を通る低周波の波形、黒丸＝測定値。</p>
 <div class="controls">
@@ -194,7 +195,7 @@ select{width:100%;padding:7px;border:1px solid #bccadb;border-radius:6px;backgro
 <p class="small">計算：r=f mod fₛ、falias=min(r, fₛ−r)。図は振幅1・初期位相0のcos波。下図は理想的な周波数位置で、有限点FFTのピーク形状ではありません。</p>
 </section></div>
 
-<div class="frame"><section class="slide" data-page="10 / 16">
+<div class="frame"><section class="slide" data-page="10 / 21">
   <h2>8. 「FFT後半の折り返し」とエイリアシングは別物</h2>
   <p class="sub">実数データのDFTは正負周波数が共役対称。標準配列の後半は、通常の±fₛ/2の範囲では負周波数として読みます。</p>
   <div class="distinguish">
@@ -205,7 +206,7 @@ select{width:100%;padding:7px;border:1px solid #bccadb;border-radius:6px;backgro
   <div class="note" style="margin-top:12px"><b>通常の実数信号の振幅スペクトル：</b>負周波数側は冗長なので、0～fₛ/2の片側スペクトルを表示する。</div>
 </section></div>
 
-<div class="frame" id="harmonic"><section class="slide" data-page="11 / 16">
+<div class="frame" id="harmonic"><section class="slide" data-page="11 / 21">
   <h2>9. なぜ1次・2次・3次成分が出る？</h2>
   <p class="sub">これは「FFT後半の鏡写し」とは別。実際の波形や現象が基本周波数の整数倍を含むと、高調波として現れます。</p>
   <div class="grid2">
@@ -220,7 +221,7 @@ select{width:100%;padding:7px;border:1px solid #bccadb;border-radius:6px;backgro
   <div class="note rednote" style="margin-top:11px"><b>注意：</b>100 Hzの純粋なsin波だけなら、理想的には200 Hzは出ません。「2Xがある＝必ず特定故障」とも断定できず、方向・位相・負荷・構造・センサ系も合わせて判断します。</div>
 </section></div>
 
-<div class="frame"><section class="slide" data-page="12 / 16">
+<div class="frame"><section class="slide" data-page="12 / 21">
   <h2>10. 実際のFFTで気をつける4点</h2>
   <p class="sub">数式が正しくても、測定条件でスペクトルの見え方は変わります。</p>
   <div class="grid2">
@@ -232,7 +233,7 @@ select{width:100%;padding:7px;border:1px solid #bccadb;border-radius:6px;backgro
   <div class="card green" style="margin-top:16px"><h3>測定条件の決め方</h3><div class="flow" style="grid-template-columns:1fr 28px 1fr 28px 1fr 28px 1fr;margin-top:8px"><div class="step"><b>見たい最高周波数</b>fmax</div><div class="fa">→</div><div class="step"><b>fₛを決める</b>>2fmax＋余裕</div><div class="fa">→</div><div class="step"><b>観測時間を決める</b>分離能力と窓を考慮</div><div class="fa">→</div><div class="step"><b>Nを決める</b>N=fₛT</div></div></div>
 </section></div>
 
-<div class="frame"><section class="slide" data-page="13 / 16">
+<div class="frame"><section class="slide" data-page="13 / 21">
 <h2>11. 窓関数は「波形の両端を弱める重み」</h2>
 <p class="sub">1秒間だけ録音して、その録音を繰り返し再生するイメージです。</p>
 <div class="grid2"><div class="card orange"><h3>そのまま切り出すと…</h3><p>FFTでは、切り出した区間が繰り返されるものとして考えます。最後と最初が滑らかにつながらないと、境界に急な変化が生まれます。</p><div class="eq smallEq">最後 ＋3 → 最初 −2<br>つなぎ目で急に飛ぶ</div><p>この影響で、本来の周波数の周囲にも成分が広がって見えます。これが<b>スペクトルリーケージ（漏れ）</b>です。</p></div>
@@ -241,7 +242,7 @@ select{width:100%;padding:7px;border:1px solid #bccadb;border-radius:6px;backgro
 <div class="grid2" style="margin-top:16px"><div class="card green"><h3>100 Hzと105 Hzを分けたい</h3><p>ピークが細いほど2本を見分けやすい。太くなると、重なって1本に見えることがあります。</p></div><div class="card purple"><h3>大きな成分の近くの小さな成分を見たい</h3><p>大きな成分からの漏れが小さいほど、弱い成分を見つけやすい。ただし主ピーク内に重なるほど近いと分離は困難です。</p></div></div>
 <p class="small">「漏れを抑える」と「ピークを細くする」は両立しにくい関係。観測時間を長くすることも、周波数を分離するために重要です。</p>
 </section></div>
-<div class="frame"><section class="slide" data-page="14 / 16">
+<div class="frame"><section class="slide" data-page="14 / 21">
 <h2>12. 窓関数の種類と、使い分け</h2>
 <p class="sub">どれが一番よいかではなく、何を読み取りたいかで選びます。</p>
 <table class="table"><tr><th>種類</th><th>重み・結果のイメージ</th><th>使いどころ・注意</th></tr>
@@ -255,7 +256,7 @@ select{width:100%;padding:7px;border:1px solid #bccadb;border-radius:6px;backgro
 <div class="note" style="margin-top:16px"><b>フラットトップの「フラット」：</b>時間波形を平らにする意味ではありません。周波数がFFTの目盛りからずれても、振幅の読み値が変わりにくい性質を指します。重みが負になる部分もあります。</div>
 <div class="card green" style="margin-top:14px"><h3>振幅は、窓で弱めた分を補正する</h3><div class="eq smallEq">CG = Σw[n] / N　　片側振幅 ≈ 2|Y[k]| / (N・CG)</div><p class="small">孤立した正弦波の振幅用。DC・偶数Nのナイキストは2倍しません。ビンからのずれによる誤差や近接成分の干渉は残ります。雑音のパワー・PSDには別の正規化が必要です。</p></div>
 </section></div>
-<div class="frame" id="windows"><section class="slide" data-page="15 / 16">
+<div class="frame" id="windows"><section class="slide" data-page="15 / 21">
 <h2>13. 窓を切り替えると、何が変わる？</h2>
 <p class="sub">同じ信号に違う窓を掛けて比較。灰＝矩形窓、青＝選んだ窓です。</p>
 <div class="controls"><div class="control"><label for="windowKind">窓の種類</label><select id="windowKind"><option value="rect">矩形</option><option value="hann" selected>Hann</option><option value="hamming">Hamming</option><option value="blackman">Blackman</option><option value="bh">Blackman–Harris（4項）</option><option value="flat">フラットトップ（5項）</option><option value="kaiser">Kaiser（β=8.6）</option></select></div><div class="control"><label for="windowFreq">入力周波数：<span id="windowFreqVal">103.5</span> Hz ／ FFTビン間隔 1 Hz</label><input id="windowFreq" type="range" min="100" max="107" step="0.1" value="103.5"><span class="small">整数値と、その間を比べてみてください。</span></div></div>
@@ -267,8 +268,49 @@ select{width:100%;padding:7px;border:1px solid #bccadb;border-radius:6px;backgro
 <div class="note">周波数を103→103.5 Hzに動かすと、目盛りの間にピークが移動します。窓を切り替え、<b>漏れ・ピークの太さ・振幅の読み値</b>を比べてください。</div>
 </section></div>
 
-<div class="frame" id="summary"><section class="slide" data-page="16 / 16">
-  <h2>まとめ：混同しやすいところだけ最後に整理</h2>
+<div class="frame"><section class="slide" data-page="16 / 21"><h2>14. 同じ振動なのに、数値が違う？</h2><div class="purpose"><div><b>なぜ必要？</b>Peak・RMS・両振幅では、同じ揺れでも値が違います。</div><div><b>どんなとき？</b>測定器同士、対策前後、仕様値との比較で使います。</div></div>
+<p class="sub">中心から左右に1 mmずつ揺れる正弦波。どの大きさを読んでいるかを区別します。</p>
+<div class="control"><label for="peakAmp">片振幅 A：<span id="peakValue"></span> mm</label><input id="peakAmp" type="range" min="0.1" max="2" step="0.1" value="1"></div>
+<svg id="peakPlot" class="live-chart" viewBox="0 0 876 195" role="img" aria-label="片振幅、両振幅と実効値を示した正弦波"></svg>
+<div class="grid3" style="margin-top:12px"><div class="card blue center"><b>Peak：中心から片側</b><div class="value" id="peakRead"></div></div><div class="card orange center"><b>両振幅：端から端</b><div class="value" id="ppRead"></div></div><div class="card green center"><b>RMS：二乗平均の平方根</b><div class="value" id="rmsRead"></div></div></div>
+<div class="eq smallEq">正弦波：RMS = A/√2　　両振幅 = 2A</div>
+<p>そのまま平均すると正負が打ち消し合います。RMSは「各値を二乗 → 平均 → 平方根」で、振動の大きさを表します。</p>
+<div class="note">振幅1 mmの100 Hz正弦波は、片側FFTでもPeak表示なら1 mm、RMS表示なら約0.707 mm。<b>比較前に単位と表示方式をそろえる。</b></div>
+<p class="small">換算式は正弦波を適切な区間（整数周期など）で評価した場合。一般の波形は RMS=√(Σx[n]²/N) で求めます。FFTの1本の山は、その周波数成分の大きさです。</p></section></div>
+<div class="frame"><section class="slide" data-page="17 / 21"><h2>15. 変位・速度・加速度は、何が違う？</h2><div class="purpose"><div><b>なぜ必要？</b>加速度の山が高くても、変位が大きいとは限りません。</div><div><b>どんなとき？</b>変位計と加速度計の比較、周波数別の振動評価で使います。</div></div>
+<p class="sub">変位＝どれだけ動くか。速度＝どれだけ速く動くか。加速度＝速度がどれだけ速く変わるか。</p>
+<div class="controls"><div class="control"><label for="dispAmp">変位の片振幅：<span id="dispLabel"></span> μm</label><input id="dispAmp" type="range" min="1" max="50" step="1" value="10"></div><div class="control"><label for="motionFreq">周波数：<span id="motionLabel"></span> Hz</label><input id="motionFreq" type="range" min="10" max="200" step="10" value="100"></div></div>
+<div class="grid3" style="margin-top:14px"><div class="card blue"><b>変位 X</b><div class="value" id="dispRead"></div><p class="small">振れ幅に注目</p></div><div class="card orange"><b>速度 V=2πfX</b><div class="value" id="velRead"></div><p class="small">動く速さに注目</p></div><div class="card green"><b>加速度 a=(2πf)²X</b><div class="value" id="accRead"></div><p class="small">速さの変化に注目</p></div></div>
+<svg id="motionPlot" class="live-chart" viewBox="0 0 876 175" role="img" aria-label="同じ変位での周波数と速度・加速度の比"></svg>
+<div class="note">変位を固定して100→200 Hzにすると、<b>速度は2倍、加速度は4倍</b>。高周波ほど加速度に強く表れます。</div>
+<p class="small">上の数値はすべて正弦波のPeak。グラフは「同じ変位・100 Hz」の値を1とした比で、異なる単位の数値を直接比較していません。Xをmで代入すればVはm/s、aはm/s²になります。</p>
+<p>実測の広帯域信号を変換するときは、周波数ごとに扱います。加速度の積分では低周波の誤差が大きくなりやすく、DCをそのまま割ることはできません。</p></section></div>
+<div class="frame"><section class="slide" data-page="18 / 21"><h2>16. Hzと次数：回転数が変わっても比べる</h2><div class="purpose"><div><b>なぜ必要？</b>同じ回転由来の現象でも、回転数で周波数が動きます。</div><div><b>どんなとき？</b>3000 rpmと6000 rpmの測定結果を比較するときに使います。</div></div>
+<div class="eq smallEq">回転周波数 fᵣ = rpm/60　　次数 = 周波数 f / fᵣ</div>
+<div class="control"><label for="orderRPM">回転速度：<span id="rpmRead"></span> rpm</label><input id="orderRPM" type="range" min="600" max="6000" step="300" value="3000"></div>
+<svg id="orderPlot" class="live-chart" viewBox="0 0 876 205" role="img" aria-label="回転速度によるHz軸と次数軸の変化"></svg>
+<table class="table"><tr><th>成分</th><th>1次</th><th>2次</th><th>3次</th></tr><tr><th>周波数</th><td id="order1"></td><td id="order2"></td><td id="order3"></td></tr><tr><th>次数</th><td>1</td><td>2</td><td>3</td></tr></table>
+<div class="note" style="margin-top:14px">バーを動かすと、Hz軸の山は動きますが、次数軸では1・2・3の位置に残ります。<b>「何Hzか」に加えて「回転の何倍か」で読む</b>と比較しやすくなります。</div>
+<p>回転数を変えても100 Hzなど同じ位置に残る成分は、回転に比例する成分と区別して考えます。次数だけで故障原因を断定することはできません。</p>
+<p class="small">ここでは各測定区間の回転数は一定。加減速中は単に平均回転数で割るだけでは山が広がります。回転角に合わせた再サンプリングなどを行う「オーダートラッキング」を使います。</p></section></div>
+<div class="frame"><section class="slide" data-page="19 / 21"><h2>17. 1周期分なら、FFTの番号＝次数？</h2><div class="purpose"><div><b>なぜ必要？</b>サンプル数・観測時間・次数の関係を整理できます。</div><div><b>どんなとき？</b>整数次を学ぶ例や、回転と同期して測定するときに使います。</div></div>
+<p class="sub">基本波のちょうど1周期を、等間隔のN点で測定。ゼロ追加なしなら、k番目がk次に対応します。</p>
+<div class="eq">T=1/fᵣ　→　Δf=1/T=fᵣ　→　f[k]/fᵣ=k</div>
+<table class="table"><tr><th>例：6000 rpm → 100 Hz</th><th>観測時間</th><th>FFTの目盛り</th><th>次数の刻み</th></tr><tr><td>1周期</td><td>0.01秒</td><td>100 Hz</td><td>1次</td></tr><tr><td>10周期</td><td>0.1秒</td><td>10 Hz</td><td>0.1次</td></tr></table>
+<div class="grid2" style="margin-top:15px"><div class="card blue"><h3>1周期と2の累乗は両立する</h3><p>fₛ=25,600 Hzなら、100 Hzの1周期を256点で測れます。</p><div class="eq smallEq">N=fₛ/fᵣ=25,600/100=256</div></div><div class="card green"><h3>2の累乗でなくても計算できる</h3><p>fₛ=10,000 Hzなら1周期は100点。その長さに対応したFFTが使えます。</p><div class="eq smallEq">N=10,000/100=100</div></div></div>
+<div class="note" style="margin-top:15px"><b>1周期は整数次を読むのに便利。ただし目盛りが粗い。</b> 1.2次なども見たいときは複数周期を取り、周波数を回転周波数で割って次数表示にします。</div>
+<p>q次まで調べるなら fₛ&gt;2qfᵣ が基本条件。1周期N点なら q&lt;N/2です。実測ではフィルタのための余裕も必要です。</p>
+<p class="small">周期と測定区間がずれると漏れが出ます。1周期に両端を重複して入れず、n=0,…,N−1のN点を使います。ゼロ追加後はビン番号と次数が直接一致しません。</p></section></div>
+<div class="frame"><section class="slide" data-page="20 / 21"><h2>18. 共振：力が強い？ 構造が揺れやすい？</h2><div class="purpose"><div><b>なぜ必要？</b>FFTの山だけでは、加振力と構造の影響を分けられません。</div><div><b>どんなとき？</b>特定の回転数で振動が急増する原因を考えるときに使います。</div></div>
+<p class="sub">ブランコをタイミングよく押すと大きく揺れるイメージ。構造にも揺れやすい速さがあります。</p>
+<div class="controls"><div class="control"><label for="resFreq">押す速さ＝加振周波数：<span id="resFreqRead"></span> Hz</label><input id="resFreq" type="range" min="10" max="200" step="1" value="100"></div><div class="control"><label for="resDamp">揺れの収まりやすさ＝減衰比 ζ：<span id="resDampRead"></span></label><input id="resDamp" type="range" min="0.02" max="0.3" step="0.01" value="0.05"></div></div>
+<svg id="resPlot" class="live-chart" viewBox="0 0 876 220" role="img" aria-label="一定振幅の力で加振したときの周波数と変位倍率"></svg>
+<div class="alias-result"><b id="resRead"></b><span>固有振動数100 Hz。力の振幅を一定にした例。</span></div>
+<div class="eq smallEq">変位倍率 = 1 / √{(1−r²)²+(2ζr)²}　　r=f/fₙ</div>
+<div class="note">加振周波数が固有振動数の近くに来ると、大きく揺れます。減衰が大きいほど山は低く、広くなります。<b>回転数を変えて山の動きと振幅を追う</b>と、共振の検討に役立ちます。</div>
+<p class="small">1自由度・線形・定常応答のモデル。倍率は静的変位F₀/kに対する比で、実機の変位量ではありません。ピークは減衰によってfₙより少し低い周波数になります。不釣り合い力は回転速度の二乗で増えるため、この一定力の曲線をそのまま実測値と比較しません。</p></section></div>
+<div class="frame" id="summary"><section class="slide" data-page="21 / 21">
+  <h2>まとめ：測る → 計算する → 正しく読む</h2>
   <div class="grid2" style="margin-top:15px">
     <div class="card blue"><h3>FFTの計算原理</h3><p>元データに各周波数のsin・cosを掛け、足し合わせる。DFTの複素指数表現はそのまとめ書き。</p></div>
     <div class="card green"><h3>FFTとは</h3><p>DFTと同じ答えを高速に求めるアルゴリズム。変換そのものが別物ではない。</p></div>
@@ -277,8 +319,8 @@ select{width:100%;padding:7px;border:1px solid #bccadb;border-radius:6px;backgro
     <div class="card purple"><h3>FFT後半</h3><p>実数信号では負周波数。raw配列の「800の位置」は +800 Hzではなく、fₛ=1000なら <b>−200 Hz</b> と解釈する。</p></div>
     <div class="card soft"><h3>2次成分</h3><p>本当に200 Hz成分が波形に含まれるときの高調波。FFTの負周波数対称性やエイリアスとは別。</p></div>
   </div>
+  <div class="note" style="margin-top:12px">実測では、単位・Peak/RMS・窓・観測時間をそろえて比較する。次数は回転との関係、共振は構造の揺れやすさを考える手がかりです。</div>
   <div class="note greennote" style="margin-top:15px"><b>一番大事：</b>「測定範囲外が低周波へ化ける＝エイリアシング」と、「FFT配列後半に負周波数が並ぶ＝共役対称」は分けて考える。</div>
-  <div style="margin-top:15px" class="sources"><b>参考資料（公式ドキュメント・専門書）</b><ul><li><a href="https://www.ni.com/en/shop/data-acquisition/measurement-fundamentals/analog-fundamentals/acquiring-an-analog-signal--bandwidth--nyquist-sampling-theorem-.html" target="_blank" rel="noopener">NI：Nyquist Sampling Theorem / Aliasing</a></li><li><a href="https://www.ni.com/en/shop/data-acquisition/measurement-fundamentals/analog-fundamentals/anti-aliasing-filters-and-their-usage-explained.html" target="_blank" rel="noopener">NI：Anti-Aliasing Filters</a></li><li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.fft.fft.html" target="_blank" rel="noopener">SciPy：FFT / DFT定義・負周波数の並び</a></li><li><a href="https://numpy.org/doc/stable/reference/generated/numpy.fft.fftfreq.html" target="_blank" rel="noopener">NumPy：FFT frequency bins</a></li><li><a href="https://www.dspguide.com/ch12/2.htm" target="_blank" rel="noopener">DSP Guide：FFTの分割と結合</a></li><li><a href="https://www.ni.com/en/shop/data-acquisition/measurement-fundamentals/analog-fundamentals/understanding-ffts-and-windowing.html" target="_blank" rel="noopener">NI：FFTと窓関数</a></li><li><a href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html" target="_blank" rel="noopener">SciPy：窓関数の定義と種類</a></li></ul></div>
 </section></div>
 
 </main>
@@ -336,6 +378,22 @@ let peak=0;for(let k=1;k<512;k++)peak=Math.max(peak,out[k*16]);document.getEleme
 const notes={rect:'そのまま切り出す。整数Hzではビン間の漏れが見えなくなるが、線の間にはサイドローブがある。',hann:'端を滑らかに弱める。漏れは減るが主ピークは広がる。',hamming:'端は少し残る。近傍のサイドローブを抑える形。',blackman:'漏れをより抑える代わりに、主ピークが広がる。',bh:'低いサイドローブ。非常に近い周波数の分離には注意。',flat:'広いピーク。周波数がビンの間でも振幅の読み値が変わりにくい。',kaiser:'β=8.6を固定した例。重みの形はβで調整できる。'};document.getElementById('windowComment').textContent=notes[kind];fitSlideContents();}
 let windowUpdatePending=false;function requestWindowUpdate(){if(windowUpdatePending)return;windowUpdatePending=true;requestAnimationFrame(()=>{windowUpdatePending=false;updateWindow();});}
 document.getElementById('windowKind').addEventListener('change',requestWindowUpdate);document.getElementById('windowFreq').addEventListener('input',requestWindowUpdate);updateWindow();fitSlideContents();
+
+
+function practicalSVG(id,g){setWindowSVG(id,g);}
+function val(id){return +document.getElementById(id).value;}
+function txt(id,v){document.getElementById(id).textContent=v;}
+function gain(r,z){return 1/Math.hypot(1-r*r,2*z*r);}
+function updatePractical(){
+ const A=val('peakAmp'),rms=A/Math.sqrt(2);txt('peakValue',A.toFixed(1));txt('peakRead',A.toFixed(2)+' mm');txt('ppRead',(2*A).toFixed(2)+' mm');txt('rmsRead',rms.toFixed(3)+' mm');
+ const yp=v=>94-v*35;let g='<text x="15" y="15">変位 mm</text>';for(const v of [-2,-1,0,1,2])g+=`<line x1="50" y1="${yp(v)}" x2="850" y2="${yp(v)}" stroke="#e1e7ef"/><text x="40" y="${yp(v)+4}" text-anchor="end">${v}</text>`;
+ g+=svgPath(Array.from({length:401},(_,i)=>[50+i*1.7,yp(A*Math.sin(4*Math.PI*i/400))]),'#2365d8');g+=`<line x1="50" y1="${yp(rms)}" x2="740" y2="${yp(rms)}" stroke="#1d9a68" stroke-dasharray="5 3"/><text x="56" y="${yp(rms)-5}" fill="#16875b">RMSの値（振れの端ではない）</text><line x1="765" y1="94" x2="765" y2="${yp(A)}" stroke="#2365d8" stroke-width="3"/><text x="748" y="180">Peak</text><line x1="825" y1="${yp(-A)}" x2="825" y2="${yp(A)}" stroke="#e87523" stroke-width="3"/><text x="802" y="180">両振幅</text><text x="365" y="185">時間 →（2周期分）</text>`;practicalSVG('peakPlot',g);
+ const X=val('dispAmp'),f=val('motionFreq');txt('dispLabel',X);txt('motionLabel',f);txt('dispRead',X+' μm');txt('velRead',(2*Math.PI*f*X/1000).toFixed(2)+' mm/s');txt('accRead',((2*Math.PI*f)**2*X/1e6).toFixed(2)+' m/s²');
+ g='<text x="15" y="17">100 Hz時に対する比</text>';for(const y of [0,1,2,3,4])g+=`<line x1="170" y1="${140-y*28}" x2="800" y2="${140-y*28}" stroke="#e1e7ef"/><text x="154" y="${144-y*28}" text-anchor="end">${y}</text>`;[[1,'変位','#2365d8'],[f/100,'速度','#e87523'],[(f/100)**2,'加速度','#1d9a68']].forEach(([v,label,color],i)=>{let x=240+210*i;g+=`<rect x="${x}" y="${140-v*28}" width="55" height="${v*28}" fill="${color}"/><text x="${x+27}" y="${132-v*28}" text-anchor="middle">${v.toFixed(2)}倍</text><text x="${x+27}" y="160" text-anchor="middle">${label}</text>`});practicalSVG('motionPlot',g);
+ const rpm=val('orderRPM'),fr=rpm/60;txt('rpmRead',rpm);[1,2,3].forEach(k=>txt('order'+k,(k*fr).toFixed(0)+' Hz'));g='<text x="12" y="20">Hz軸：回転数で山が動く</text><text x="12" y="119">次数軸：回転由来なら位置は同じ</text>';for(let h=0;h<=300;h+=50)g+=`<text x="${80+h*2.5}" y="93" text-anchor="middle">${h}</text>`;for(let k=0;k<=3;k++)g+=`<text x="${80+k*250}" y="195" text-anchor="middle">${k}次</text>`;g+='<line x1="80" y1="76" x2="830" y2="76" stroke="#b5c1cf"/><line x1="80" y1="176" x2="830" y2="176" stroke="#b5c1cf"/>';[1,2,3].forEach((k,i)=>{const col=['#2365d8','#e87523','#1d9a68'][i];g+=`<line x1="${80+k*fr*2.5}" y1="36" x2="${80+k*fr*2.5}" y2="76" stroke="${col}" stroke-width="5"/><line x1="${80+k*250}" y1="136" x2="${80+k*250}" y2="176" stroke="${col}" stroke-width="5"/>`});practicalSVG('orderPlot',g);
+ const rf=val('resFreq'),z=val('resDamp');txt('resFreqRead',rf);txt('resDampRead',z.toFixed(2));txt('resRead','変位倍率 '+gain(rf/100,z).toFixed(2)+' 倍');const xx=f=>55+f/200*785,yy=v=>180-v/26*150;g='<text x="12" y="15">変位倍率</text>';for(let a=0;a<=25;a+=5)g+=`<line x1="55" y1="${yy(a)}" x2="840" y2="${yy(a)}" stroke="#e1e7ef"/><text x="44" y="${yy(a)+4}" text-anchor="end">${a}</text>`;for(let a=0;a<=200;a+=50)g+=`<text x="${xx(a)}" y="200" text-anchor="middle">${a}</text>`;g+='<text x="750" y="218">加振周波数 Hz</text>';g+=svgPath(Array.from({length:1001},(_,i)=>[xx(i/5),yy(gain(i/500,z))]),'#2365d8');g+=`<line x1="${xx(100)}" y1="24" x2="${xx(100)}" y2="180" stroke="#9aa8bb" stroke-dasharray="5 3"/><text x="${xx(100)+6}" y="20">固有振動数100 Hz</text><circle cx="${xx(rf)}" cy="${yy(gain(rf/100,z))}" r="5" fill="#e87523"/>`;practicalSVG('resPlot',g);fitSlideContents();
+}
+['peakAmp','dispAmp','motionFreq','orderRPM','resFreq','resDamp'].forEach(id=>document.getElementById(id).addEventListener('input',updatePractical));updatePractical();
 
 </script>
 </body>
