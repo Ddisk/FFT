@@ -60,12 +60,13 @@ h1{font-size:47px;line-height:1.16;margin:11px 0 15px;letter-spacing:.02em}h2{fo
 .alias-result b{font-size:21px;color:var(--blue);white-space:nowrap}.alias-result span{font-size:13px}
 #aliasNote{min-height:20px;margin:5px 0}.control{padding:8px 12px}.control input{accent-color:var(--blue);cursor:pointer}
 @media print{.slide-content{transform-origin:top left}}
+select{width:100%;padding:7px;border:1px solid #bccadb;border-radius:6px;background:white;color:#152238;font:inherit}
 </style>
 </head>
 <body>
 <main class="deck">
 
-<div class="frame"><section class="slide" data-page="1 / 13">
+<div class="frame"><section class="slide" data-page="1 / 16">
   <div class="hero">
     <div>
       <div class="eyebrow">FOURIER / DFT / FFT</div>
@@ -89,7 +90,7 @@ h1{font-size:47px;line-height:1.16;margin:11px 0 15px;letter-spacing:.02em}h2{fo
   <div class="footerline">※ このページは学習用。実測ではセンサ帯域・アンチエイリアシングフィルタ・窓関数なども考慮する。</div>
 </section></div>
 
-<div class="frame" id="basic"><section class="slide" data-page="2 / 13">
+<div class="frame" id="basic"><section class="slide" data-page="2 / 16">
   <h2>1. 波形は sin・cos の足し算で表せる</h2>
   <p class="sub">フーリエ解析の出発点。複雑な周期波形も、周波数の違う正弦・余弦成分に分けて考えられます。</p>
   <div class="grid2">
@@ -106,7 +107,7 @@ h1{font-size:47px;line-height:1.16;margin:11px 0 15px;letter-spacing:.02em}h2{fo
   <div class="note" style="margin-top:14px"><b>FFTは逆向きに考える：</b>「この複雑な波形には、100 Hzがどれだけ？ 200 Hzがどれだけ？」を求める。</div>
 </section></div>
 
-<div class="frame"><section class="slide" data-page="3 / 13">
+<div class="frame"><section class="slide" data-page="3 / 16">
   <h2>2. なぜ「掛けて、全部足す」と周波数が分かる？</h2>
   <p class="sub">同じ周波数のsin・cosとの積和から成分を取り出します。異なるDFTビンの基底は、N点全体で正負が打ち消し合います。</p>
   <div class="grid2">
@@ -117,7 +118,7 @@ h1{font-size:47px;line-height:1.16;margin:11px 0 15px;letter-spacing:.02em}h2{fo
   <div class="flow"><div class="step"><b>元の波形</b>x[n]</div><div class="fa">×</div><div class="step"><b>試す波</b>sin / cos</div><div class="fa">→</div><div class="step"><b>全部足す</b>Σ</div><div class="fa">→</div><div class="step"><b>一致度</b>周波数成分</div></div>
 </section></div>
 
-<div class="frame"><section class="slide" data-page="4 / 13">
+<div class="frame"><section class="slide" data-page="4 / 16">
   <h2>3. DFTの式は「cos と sin を掛けて足す」をまとめたもの</h2>
   <p class="sub">難しそうに見える複素指数も、オイラーの公式で分ければ中身は同じです。</p>
   <div class="eq big">X[k] = Σ<sub>n=0</sub><sup>N−1</sup> x[n] e<sup>−j2πkn/N</sup></div>
@@ -131,7 +132,7 @@ h1{font-size:47px;line-height:1.16;margin:11px 0 15px;letter-spacing:.02em}h2{fo
   <div class="note" style="margin-top:15px"><b>|X[k]| = √(Re² + Im²)</b> はDFT係数の大きさ。窓なし・ビン一致の正弦波の片側振幅は通常 <b>2|X[k]|/N</b>（DC・偶数Nのナイキストは |X[k]|/N）。位相は <b>atan2(Im, Re)</b>、j²=−1。</div>
 </section></div>
 
-<div class="frame"><section class="slide" data-page="5 / 13">
+<div class="frame"><section class="slide" data-page="5 / 16">
   <h2>4-1. DFTとFFTの違い</h2>
   <p class="sub">FFTは「別の変換」ではありません。DFTと同じ結果を、対称性・周期性などを利用して高速に求める計算法です。</p>
   <div class="distinguish">
@@ -142,7 +143,7 @@ h1{font-size:47px;line-height:1.16;margin:11px 0 15px;letter-spacing:.02em}h2{fo
   <div class="note" style="margin-top:16px">FFT点数を必ず1024・2048・4096にする必要はありません。ただし高速化しやすい長さがあり、2の累乗は代表例です。</div>
 </section></div>
 
-<div class="frame"><section class="slide" data-page="6 / 13">
+<div class="frame"><section class="slide" data-page="6 / 16">
 <h2>4-2. FFTは、どの計算を使い回す？</h2>
 <p class="sub">代表的なradix-2 FFT：データを偶数番・奇数番に分け、小さなDFTの答えを再利用します。</p>
 <div class="grid2"><div class="card blue"><h3>① N点を2つのN/2点へ</h3><p>E[k]：x[0], x[2], x[4]… のDFT<br>O[k]：x[1], x[3], x[5]… のDFT</p><div class="eq smallEq">W<sub>N</sub><sup>k</sup> = e<sup>−j2πk/N</sup></div></div>
@@ -153,7 +154,7 @@ h1{font-size:47px;line-height:1.16;margin:11px 0 15px;letter-spacing:.02em}h2{fo
 <div class="note greennote">省くのは情報ではなく、重複する計算。数学的には同じDFTであり、実装による丸め誤差はあり得ます。</div>
 </section></div>
 
-<div class="frame" id="sampling"><section class="slide" data-page="7 / 13">
+<div class="frame" id="sampling"><section class="slide" data-page="7 / 16">
   <h2>5. サンプリング数は「何Hzまで」「何Hz刻みで」で決める</h2>
   <p class="sub">必要なのはサンプリング周波数 fₛ とサンプル数 N の両方です。</p>
   <div class="grid3">
@@ -165,7 +166,7 @@ h1{font-size:47px;line-height:1.16;margin:11px 0 15px;letter-spacing:.02em}h2{fo
   <table class="table" style="margin-top:14px"><tr><th>fₛ</th><th>N</th><th>記録時間 T</th><th>Δf</th></tr><tr><td>2560 Hz</td><td>1024</td><td>0.4 s</td><td>2.5 Hz</td></tr><tr><td>2560 Hz</td><td>2048</td><td>0.8 s</td><td>1.25 Hz</td></tr><tr><td>2560 Hz</td><td>4096</td><td>1.6 s</td><td>0.625 Hz</td></tr></table><p class="small">ここではゼロ追加なし。Δfはビン間隔であり、近接した2成分を分離できるかは窓関数・振幅差・雑音にも依存します。</p>
 </section></div>
 
-<div class="frame"><section class="slide" data-page="8 / 13">
+<div class="frame"><section class="slide" data-page="8 / 16">
   <h2>6. なぜ「2倍より速く」サンプリングする必要がある？</h2>
   <p class="sub">ここでは0 Hzから最高周波数までの信号を扱います。任意の位相の正弦波を区別するには fₛ>2fmax。ちょうど2倍では、位相によって情報を失います。</p>
   <div class="grid2">
@@ -176,7 +177,7 @@ h1{font-size:47px;line-height:1.16;margin:11px 0 15px;letter-spacing:.02em}h2{fo
   <div class="eq big" style="margin-top:16px">f<sub>max</sub> &lt; fₛ / 2　⇔　fₛ &gt; 2 f<sub>max</sub></div>
 </section></div>
 
-<div class="frame" id="alias"><section class="slide" data-page="9 / 13">
+<div class="frame" id="alias"><section class="slide" data-page="9 / 16">
 <h2>7. バーを動かして、折り返しを確かめる</h2>
 <p class="sub">橙＝実際の入力波形、青＝同じサンプリング点を通る低周波の波形、黒丸＝測定値。</p>
 <div class="controls">
@@ -193,7 +194,7 @@ h1{font-size:47px;line-height:1.16;margin:11px 0 15px;letter-spacing:.02em}h2{fo
 <p class="small">計算：r=f mod fₛ、falias=min(r, fₛ−r)。図は振幅1・初期位相0のcos波。下図は理想的な周波数位置で、有限点FFTのピーク形状ではありません。</p>
 </section></div>
 
-<div class="frame"><section class="slide" data-page="10 / 13">
+<div class="frame"><section class="slide" data-page="10 / 16">
   <h2>8. 「FFT後半の折り返し」とエイリアシングは別物</h2>
   <p class="sub">実数データのDFTは正負周波数が共役対称。標準配列の後半は、通常の±fₛ/2の範囲では負周波数として読みます。</p>
   <div class="distinguish">
@@ -204,7 +205,7 @@ h1{font-size:47px;line-height:1.16;margin:11px 0 15px;letter-spacing:.02em}h2{fo
   <div class="note" style="margin-top:12px"><b>通常の実数信号の振幅スペクトル：</b>負周波数側は冗長なので、0～fₛ/2の片側スペクトルを表示する。</div>
 </section></div>
 
-<div class="frame" id="harmonic"><section class="slide" data-page="11 / 13">
+<div class="frame" id="harmonic"><section class="slide" data-page="11 / 16">
   <h2>9. なぜ1次・2次・3次成分が出る？</h2>
   <p class="sub">これは「FFT後半の鏡写し」とは別。実際の波形や現象が基本周波数の整数倍を含むと、高調波として現れます。</p>
   <div class="grid2">
@@ -219,7 +220,7 @@ h1{font-size:47px;line-height:1.16;margin:11px 0 15px;letter-spacing:.02em}h2{fo
   <div class="note rednote" style="margin-top:11px"><b>注意：</b>100 Hzの純粋なsin波だけなら、理想的には200 Hzは出ません。「2Xがある＝必ず特定故障」とも断定できず、方向・位相・負荷・構造・センサ系も合わせて判断します。</div>
 </section></div>
 
-<div class="frame"><section class="slide" data-page="12 / 13">
+<div class="frame"><section class="slide" data-page="12 / 16">
   <h2>10. 実際のFFTで気をつける4点</h2>
   <p class="sub">数式が正しくても、測定条件でスペクトルの見え方は変わります。</p>
   <div class="grid2">
@@ -231,7 +232,42 @@ h1{font-size:47px;line-height:1.16;margin:11px 0 15px;letter-spacing:.02em}h2{fo
   <div class="card green" style="margin-top:16px"><h3>測定条件の決め方</h3><div class="flow" style="grid-template-columns:1fr 28px 1fr 28px 1fr 28px 1fr;margin-top:8px"><div class="step"><b>見たい最高周波数</b>fmax</div><div class="fa">→</div><div class="step"><b>fₛを決める</b>>2fmax＋余裕</div><div class="fa">→</div><div class="step"><b>観測時間を決める</b>分離能力と窓を考慮</div><div class="fa">→</div><div class="step"><b>Nを決める</b>N=fₛT</div></div></div>
 </section></div>
 
-<div class="frame" id="summary"><section class="slide" data-page="13 / 13">
+<div class="frame"><section class="slide" data-page="13 / 16">
+<h2>11. 窓関数は「波形の両端を弱める重み」</h2>
+<p class="sub">1秒間だけ録音して、その録音を繰り返し再生するイメージです。</p>
+<div class="grid2"><div class="card orange"><h3>そのまま切り出すと…</h3><p>FFTでは、切り出した区間が繰り返されるものとして考えます。最後と最初が滑らかにつながらないと、境界に急な変化が生まれます。</p><div class="eq smallEq">最後 ＋3 → 最初 −2<br>つなぎ目で急に飛ぶ</div><p>この影響で、本来の周波数の周囲にも成分が広がって見えます。これが<b>スペクトルリーケージ（漏れ）</b>です。</p></div>
+<div class="card blue"><h3>両端をフェードさせる</h3><p>録音の音量を最初と最後で小さくするように、波形の両端の重みを下げます。中央は比較的よく残します。</p><div class="eq smallEq">解析する波形 = 元の波形 × 窓<br>y[n] = x[n] w[n]</div><p>両端のつながりが穏やかになり、周囲への漏れを抑えられます。<b>窓の種類＝重みの形の違い</b>です。</p></div></div>
+<div class="note" style="margin-top:16px">窓はノイズだけを消すフィルタではありません。必要な信号も含めて重みを掛けるため、FFTのピーク幅や振幅も変わります。</div>
+<div class="grid2" style="margin-top:16px"><div class="card green"><h3>100 Hzと105 Hzを分けたい</h3><p>ピークが細いほど2本を見分けやすい。太くなると、重なって1本に見えることがあります。</p></div><div class="card purple"><h3>大きな成分の近くの小さな成分を見たい</h3><p>大きな成分からの漏れが小さいほど、弱い成分を見つけやすい。ただし主ピーク内に重なるほど近いと分離は困難です。</p></div></div>
+<p class="small">「漏れを抑える」と「ピークを細くする」は両立しにくい関係。観測時間を長くすることも、周波数を分離するために重要です。</p>
+</section></div>
+<div class="frame"><section class="slide" data-page="14 / 16">
+<h2>12. 窓関数の種類と、使い分け</h2>
+<p class="sub">どれが一番よいかではなく、何を読み取りたいかで選びます。</p>
+<table class="table"><tr><th>種類</th><th>重み・結果のイメージ</th><th>使いどころ・注意</th></tr>
+<tr><td><b>矩形</b></td><td>全点の重みが1。そのまま切る</td><td>整数周期が収まる信号。ずれると漏れが大きい</td></tr>
+<tr><td><b>Hann（ハン）</b></td><td>滑らかに両端をゼロへ近づける</td><td>一般的な振動解析での比較の出発点</td></tr>
+<tr><td><b>Hamming</b></td><td>Hannに似た形。端は約0.08残る</td><td>主ピーク近傍の漏れを抑える。遠方の減衰は別</td></tr>
+<tr><td><b>Blackman</b></td><td>中央を重視。漏れを抑える</td><td>弱い成分を探す。ただしピークは広がる</td></tr>
+<tr><td><b>Blackman–Harris</b></td><td>4項型はサイドローブを強く抑える</td><td>強弱差の大きい成分。近接成分の分離に注意</td></tr>
+<tr><td><b>フラットトップ</b></td><td>振幅読み取りを重視した特殊な形</td><td>振幅測定。ピークが広いため分離には不向き</td></tr>
+<tr><td><b>Kaiser（カイザー）</b></td><td>βで重みの形を調整できる</td><td>βを大きくすると一般に漏れ低減・ピーク拡大</td></tr></table>
+<div class="note" style="margin-top:16px"><b>フラットトップの「フラット」：</b>時間波形を平らにする意味ではありません。周波数がFFTの目盛りからずれても、振幅の読み値が変わりにくい性質を指します。重みが負になる部分もあります。</div>
+<div class="card green" style="margin-top:14px"><h3>振幅は、窓で弱めた分を補正する</h3><div class="eq smallEq">CG = Σw[n] / N　　片側振幅 ≈ 2|Y[k]| / (N・CG)</div><p class="small">孤立した正弦波の振幅用。DC・偶数Nのナイキストは2倍しません。ビンからのずれによる誤差や近接成分の干渉は残ります。雑音のパワー・PSDには別の正規化が必要です。</p></div>
+</section></div>
+<div class="frame" id="windows"><section class="slide" data-page="15 / 16">
+<h2>13. 窓を切り替えると、何が変わる？</h2>
+<p class="sub">同じ信号に違う窓を掛けて比較。灰＝矩形窓、青＝選んだ窓です。</p>
+<div class="controls"><div class="control"><label for="windowKind">窓の種類</label><select id="windowKind"><option value="rect">矩形</option><option value="hann" selected>Hann</option><option value="hamming">Hamming</option><option value="blackman">Blackman</option><option value="bh">Blackman–Harris（4項）</option><option value="flat">フラットトップ（5項）</option><option value="kaiser">Kaiser（β=8.6）</option></select></div><div class="control"><label for="windowFreq">入力周波数：<span id="windowFreqVal">103.5</span> Hz ／ FFTビン間隔 1 Hz</label><input id="windowFreq" type="range" min="100" max="107" step="0.1" value="103.5"><span class="small">整数値と、その間を比べてみてください。</span></div></div>
+<div class="grid2" style="margin-top:10px"><div><div class="live-heading"><b>① 掛ける重み w[n]</b></div><svg id="windowShape" class="live-chart" viewBox="0 0 420 130" role="img" aria-label="窓関数の重み"></svg></div><div><div class="live-heading"><b>② 窓を掛けた時間波形（1秒間）</b></div><svg id="windowTime" class="live-chart" viewBox="0 0 420 130" role="img" aria-label="窓を掛ける前後の時間波形"></svg></div></div>
+<div class="live-heading"><b>③ 周波数スペクトル：ピーク幅と周囲への漏れ</b><span>振幅1を0 dBとする ／ 振幅補正あり</span></div>
+<svg id="windowFFT" class="live-chart" viewBox="0 0 876 190" role="img" aria-label="矩形窓と選択窓の周波数スペクトル"></svg>
+<div class="alias-result"><b id="windowAmplitude"></b><span id="windowComment"></span></div>
+<p class="small">fₛ=1024 Hz、実測N=1024点、単一cos波・振幅1。線は16倍ゼロ追加で補間、丸は元の1 Hz間隔のFFTビン。数値は元のビンの最大振幅。補間しても本来の分離能力は上がりません。</p>
+<div class="note">周波数を103→103.5 Hzに動かすと、目盛りの間にピークが移動します。窓を切り替え、<b>漏れ・ピークの太さ・振幅の読み値</b>を比べてください。</div>
+</section></div>
+
+<div class="frame" id="summary"><section class="slide" data-page="16 / 16">
   <h2>まとめ：混同しやすいところだけ最後に整理</h2>
   <div class="grid2" style="margin-top:15px">
     <div class="card blue"><h3>FFTの計算原理</h3><p>元データに各周波数のsin・cosを掛け、足し合わせる。DFTの複素指数表現はそのまとめ書き。</p></div>
@@ -242,7 +278,7 @@ h1{font-size:47px;line-height:1.16;margin:11px 0 15px;letter-spacing:.02em}h2{fo
     <div class="card soft"><h3>2次成分</h3><p>本当に200 Hz成分が波形に含まれるときの高調波。FFTの負周波数対称性やエイリアスとは別。</p></div>
   </div>
   <div class="note greennote" style="margin-top:15px"><b>一番大事：</b>「測定範囲外が低周波へ化ける＝エイリアシング」と、「FFT配列後半に負周波数が並ぶ＝共役対称」は分けて考える。</div>
-  <div style="margin-top:15px" class="sources"><b>参考資料（公式ドキュメント・専門書）</b><ul><li><a href="https://www.ni.com/en/shop/data-acquisition/measurement-fundamentals/analog-fundamentals/acquiring-an-analog-signal--bandwidth--nyquist-sampling-theorem-.html" target="_blank" rel="noopener">NI：Nyquist Sampling Theorem / Aliasing</a></li><li><a href="https://www.ni.com/en/shop/data-acquisition/measurement-fundamentals/analog-fundamentals/anti-aliasing-filters-and-their-usage-explained.html" target="_blank" rel="noopener">NI：Anti-Aliasing Filters</a></li><li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.fft.fft.html" target="_blank" rel="noopener">SciPy：FFT / DFT定義・負周波数の並び</a></li><li><a href="https://numpy.org/doc/stable/reference/generated/numpy.fft.fftfreq.html" target="_blank" rel="noopener">NumPy：FFT frequency bins</a></li><li><a href="https://www.dspguide.com/ch12/2.htm" target="_blank" rel="noopener">DSP Guide：FFTの分割と結合</a></li><li><a href="https://www.ni.com/en/shop/data-acquisition/measurement-fundamentals/analog-fundamentals/understanding-ffts-and-windowing.html" target="_blank" rel="noopener">NI：FFTと窓関数</a></li></ul></div>
+  <div style="margin-top:15px" class="sources"><b>参考資料（公式ドキュメント・専門書）</b><ul><li><a href="https://www.ni.com/en/shop/data-acquisition/measurement-fundamentals/analog-fundamentals/acquiring-an-analog-signal--bandwidth--nyquist-sampling-theorem-.html" target="_blank" rel="noopener">NI：Nyquist Sampling Theorem / Aliasing</a></li><li><a href="https://www.ni.com/en/shop/data-acquisition/measurement-fundamentals/analog-fundamentals/anti-aliasing-filters-and-their-usage-explained.html" target="_blank" rel="noopener">NI：Anti-Aliasing Filters</a></li><li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.fft.fft.html" target="_blank" rel="noopener">SciPy：FFT / DFT定義・負周波数の並び</a></li><li><a href="https://numpy.org/doc/stable/reference/generated/numpy.fft.fftfreq.html" target="_blank" rel="noopener">NumPy：FFT frequency bins</a></li><li><a href="https://www.dspguide.com/ch12/2.htm" target="_blank" rel="noopener">DSP Guide：FFTの分割と結合</a></li><li><a href="https://www.ni.com/en/shop/data-acquisition/measurement-fundamentals/analog-fundamentals/understanding-ffts-and-windowing.html" target="_blank" rel="noopener">NI：FFTと窓関数</a></li><li><a href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html" target="_blank" rel="noopener">SciPy：窓関数の定義と種類</a></li></ul></div>
 </section></div>
 
 </main>
@@ -281,6 +317,26 @@ function updateAlias(){const fs=+document.getElementById('fsRange').value,f=+doc
 function fitSlideContents(){document.querySelectorAll('.slide').forEach(s=>{let box=s.querySelector('.slide-content');if(!box){box=document.createElement('div');box.className='slide-content';[...s.children].filter(e=>!e.classList.contains('footerline')).forEach(e=>box.appendChild(e));s.prepend(box);}box.style.transform='none';const footer=s.querySelector('.footerline');const available=footer?footer.offsetTop-46:642;const height=box.scrollHeight;const k=Math.min(1,available/height);box.style.transform=`translateX(${(876-876*k)/2}px) scale(${k})`;});}
 fitSlideContents();if(document.fonts)document.fonts.ready.then(fitSlideContents);
 window.addEventListener('resize',()=>{fitSlideContents();renderWaves()});
+
+function bessel0(x){let sum=1,t=1;for(let k=1;k<45;k++){t*=x*x/(4*k*k);sum+=t;if(t<sum*1e-15)break;}return sum;}
+function windowWeights(kind,N){return Array.from({length:N},(_,n)=>{const t=n/N,a=2*Math.PI*t;switch(kind){case 'rect':return 1;case 'hann':return .5-.5*Math.cos(a);case 'hamming':return .54-.46*Math.cos(a);case 'blackman':return .42-.5*Math.cos(a)+.08*Math.cos(2*a);case 'bh':return .35875-.48829*Math.cos(a)+.14128*Math.cos(2*a)-.01168*Math.cos(3*a);case 'flat':return .21557895-.41663158*Math.cos(a)+.277263158*Math.cos(2*a)-.083578947*Math.cos(3*a)+.006947368*Math.cos(4*a);case 'kaiser':return bessel0(8.6*Math.sqrt(Math.max(0,1-(2*t-1)**2)))/bessel0(8.6);}});}
+function fftMagnitudes(data,w){const L=16384,re=new Float64Array(L),im=new Float64Array(L),sum=w.reduce((a,b)=>a+b,0);data.forEach((v,n)=>re[n]=v*w[n]);for(let i=1,j=0;i<L;i++){let bit=L>>1;for(;j&bit;bit>>=1)j^=bit;j^=bit;if(i<j)[re[i],re[j]]=[re[j],re[i]];}for(let len=2;len<=L;len*=2){const angle=-2*Math.PI/len,wr=Math.cos(angle),wi=Math.sin(angle);for(let i=0;i<L;i+=len){let ur=1,ui=0;for(let j=0;j<len/2;j++){let a=i+j,b=a+len/2,tr=ur*re[b]-ui*im[b],ti=ur*im[b]+ui*re[b];re[b]=re[a]-tr;im[b]=im[a]-ti;re[a]+=tr;im[a]+=ti;const next=ur*wr-ui*wi;ui=ur*wi+ui*wr;ur=next;}}}return Array.from({length:L/2+1},(_,k)=>Math.hypot(re[k],im[k])*(k===0||k===L/2?1:2)/sum);}
+function svgPath(points,color,width=2){return `<path d="${points.map((p,i)=>(i?'L':'M')+p[0].toFixed(2)+','+p[1].toFixed(2)).join('')}" fill="none" stroke="${color}" stroke-width="${width}"/>`;}
+function setWindowSVG(id,content){document.getElementById(id).innerHTML=`<g font-family="Arial,sans-serif" font-size="11" fill="#5e6c80">${content}</g>`;}
+function updateWindow(){const kind=document.getElementById('windowKind').value,f=+document.getElementById('windowFreq').value,N=1024,w=windowWeights(kind,N),ones=windowWeights('rect',N),data=Array.from({length:N},(_,n)=>Math.cos(2*Math.PI*f*n/1024));document.getElementById('windowFreqVal').textContent=f.toFixed(1);
+let axes=`<line x1="38" y1="92" x2="404" y2="92" stroke="#d5dde8"/><text x="8" y="24">1</text><text x="8" y="96">0</text><text x="8" y="112">−.2</text><text x="38" y="126">0</text><text x="400" y="126" text-anchor="end">1 s</text>`;
+setWindowSVG('windowShape',axes+svgPath([[38,20],[404,20]],'#adb7c4')+svgPath(w.map((v,n)=>[38+366*n/N,92-72*v]),'#2365d8'));
+let ta=`<line x1="38" y1="62" x2="404" y2="62" stroke="#d5dde8"/><text x="8" y="24">1</text><text x="8" y="110">−1</text><text x="38" y="126">0</text><text x="400" y="126" text-anchor="end">1 s</text>`;
+setWindowSVG('windowTime',ta+svgPath(data.map((v,n)=>[38+366*n/N,62-44*v]),'#c4ccd6',.8)+svgPath(data.map((v,n)=>[38+366*n/N,62-44*v*w[n]]),'#2365d8',.9));
+const raw=fftMagnitudes(data,ones),out=fftMagnitudes(data,w),x=hz=>48+(hz-90)/30*806,y=amp=>24-Math.max(-100,Math.min(0,20*Math.log10(Math.max(amp,1e-12))))*1.34;
+let g='';for(let db=0;db>=-100;db-=20){let yy=24-db*1.34;g+=`<line x1="48" y1="${yy}" x2="854" y2="${yy}" stroke="#e2e8f0"/><text x="41" y="${yy+4}" text-anchor="end">${db}</text>`;}for(let hz=90;hz<=120;hz+=5)g+=`<text x="${x(hz)}" y="178" text-anchor="middle">${hz}</text>`;g+='<text x="8" y="12">dB</text><text x="849" y="189">Hz</text>';
+for(const [arr,color] of [[raw,'#aab4c3'],[out,'#2365d8']]){g+=svgPath(Array.from({length:481},(_,i)=>[x(90+i/16),y(arr[1440+i])]),color);for(let hz=90;hz<=120;hz++)g+=`<circle cx="${x(hz)}" cy="${y(arr[hz*16])}" r="2.3" fill="${color}"/>`;}
+g+=`<line x1="${x(f)}" y1="20" x2="${x(f)}" y2="160" stroke="#e87523" stroke-dasharray="3 3"/><text x="${x(f)+5}" y="13" fill="#b45c12">入力 ${f.toFixed(1)} Hz</text>`;setWindowSVG('windowFFT',g);
+let peak=0;for(let k=1;k<512;k++)peak=Math.max(peak,out[k*16]);document.getElementById('windowAmplitude').textContent=`読み値 ${peak.toFixed(4)} ／ 真値 1`;
+const notes={rect:'そのまま切り出す。整数Hzではビン間の漏れが見えなくなるが、線の間にはサイドローブがある。',hann:'端を滑らかに弱める。漏れは減るが主ピークは広がる。',hamming:'端は少し残る。近傍のサイドローブを抑える形。',blackman:'漏れをより抑える代わりに、主ピークが広がる。',bh:'低いサイドローブ。非常に近い周波数の分離には注意。',flat:'広いピーク。周波数がビンの間でも振幅の読み値が変わりにくい。',kaiser:'β=8.6を固定した例。重みの形はβで調整できる。'};document.getElementById('windowComment').textContent=notes[kind];fitSlideContents();}
+let windowUpdatePending=false;function requestWindowUpdate(){if(windowUpdatePending)return;windowUpdatePending=true;requestAnimationFrame(()=>{windowUpdatePending=false;updateWindow();});}
+document.getElementById('windowKind').addEventListener('change',requestWindowUpdate);document.getElementById('windowFreq').addEventListener('input',requestWindowUpdate);updateWindow();fitSlideContents();
+
 </script>
 </body>
 </html>
