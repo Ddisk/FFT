@@ -48,10 +48,21 @@ h1{font-size:47px;line-height:1.16;margin:11px 0 15px;letter-spacing:.02em}h2{fo
 .sources li{break-inside:avoid;margin-bottom:5px}
 :focus-visible{outline:3px solid #e87523;outline-offset:3px}
 @media print{body{background:white}.topbar{display:none}.deck{padding:0}.frame{width:960px!important;height:720px!important;margin:0;break-after:page}.slide{transform:none!important;box-shadow:none;border-radius:0}@page{size:254mm 190.5mm;margin:0}}
+
+.distinguish .card{height:auto;min-height:250px}.step{height:auto;min-height:105px}.grid2>*,.grid3>*,.grid4>*{min-width:0}
+.slide-content{width:876px;transform-origin:top left;display:flow-root}
+.slide h2{font-size:29px}.slide .sub{font-size:16px;margin-bottom:14px}
+.live-chart{display:block;width:100%;background:#fff;border:1px solid var(--line);border-radius:10px}
+.live-heading{display:flex;justify-content:space-between;align-items:center;margin:9px 0 4px;font-size:13px}
+.live-heading span{font-size:12px;color:var(--muted)}
+.value small{font-size:13px;font-weight:600;color:var(--muted)}
+.alias-result{display:flex;gap:16px;align-items:center;background:#eef5ff;border-radius:8px;padding:8px 12px;margin-top:8px;min-height:44px}
+.alias-result b{font-size:21px;color:var(--blue);white-space:nowrap}.alias-result span{font-size:13px}
+#aliasNote{min-height:20px;margin:5px 0}.control{padding:8px 12px}.control input{accent-color:var(--blue);cursor:pointer}
+@media print{.slide-content{transform-origin:top left}}
 </style>
 </head>
 <body>
-<div class="topbar"><div class="topbar-inner"><div class="brand">FFT解析</div><a class="navbtn" href="#basic">計算原理</a><a class="navbtn" href="#sampling">サンプリング</a><a class="navbtn" href="#alias">折り返し</a><a class="navbtn" href="#harmonic">高調波</a><a class="navbtn" href="#summary">まとめ</a></div></div>
 <main class="deck">
 
 <div class="frame"><section class="slide" data-page="1 / 13">
@@ -166,18 +177,20 @@ h1{font-size:47px;line-height:1.16;margin:11px 0 15px;letter-spacing:.02em}h2{fo
 </section></div>
 
 <div class="frame" id="alias"><section class="slide" data-page="9 / 13">
-  <h2>7. エイリアシング：範囲外の周波数が「低い周波数に化ける」</h2>
-  <p class="sub">ここが折り返しの本体。等間隔の標本化では周波数がfₛごとに重なり、元の周波数を一意に判別できなくなります。</p>
-  <div class="controls">
-    <div class="control"><label for="fsRange">サンプリング周波数 fₛ</label><input id="fsRange" type="range" min="500" max="3000" step="100" value="1000"><div class="value"><span id="fsVal">1000</span> Hz</div></div>
-    <div class="control"><label for="finRange">実際の入力周波数 f</label><input id="finRange" type="range" min="0" max="3000" step="50" value="1200"><div class="value"><span id="finVal">1200</span> Hz</div></div>
-  </div>
-  <div class="alias-track" id="aliasTrack"><span class="nyq" id="nyqLabel">ナイキスト 500 Hz</span><span class="tick" style="left:0">0</span><span class="tick" style="left:50%">fₛ/2</span><span class="tick" style="left:100%">fₛ</span><span class="dot" id="inputDot"></span><span class="label" id="inputLabel"></span><span class="dot aliasdot" id="aliasDot"></span><span class="label aliaslabel" id="aliasLabel"></span></div>
-  <div class="grid2">
-    <div class="card blue center"><h3>片側FFTに見える周波数</h3><div class="eq big" id="aliasEq" aria-live="polite">1200 Hz → 200 Hz</div><p id="aliasExplain">1200 − 1000 = 200 Hz</p></div>
-    <div class="card soft"><h3>一般的な考え方（f≥0）</h3><div class="eq smallEq">r = f mod fₛ</div><div class="eq smallEq">f<sub>alias</sub> = min(r, fₛ−r)</div><p class="small">結果を 0～fₛ/2 に折り畳んだ周波数。実数正弦波の「見える周波数」を表す。</p></div>
-  </div>
-  <div class="note rednote" style="margin-top:13px"><b>答えはfₛによって変わります。</b> 入力1200 Hzは <b>fₛ=1000 Hzなら200 Hz、fₛ=2000 Hzなら800 Hz</b>。上のスライダで比較できます。DC・ナイキストに重なる場合は位相次第で全標本が0になることもあります。</div>
+<h2>7. バーを動かして、折り返しを確かめる</h2>
+<p class="sub">橙＝実際の入力波形、青＝同じサンプリング点を通る低周波の波形、黒丸＝測定値。</p>
+<div class="controls">
+<div class="control"><label for="fsRange">サンプリング周波数 fₛ：1秒間に測る回数</label><input id="fsRange" type="range" min="500" max="3000" step="100" value="1000"><div class="value"><span id="fsVal">1000</span> Hz <small>／ ナイキスト <span id="nyqVal">500</span> Hz</small></div></div>
+<div class="control"><label for="finRange">実際の入力周波数 f：1秒間に振動する回数</label><input id="finRange" type="range" min="0" max="3000" step="50" value="1200"><div class="value"><span id="finVal">1200</span> Hz → <span id="aliasVal">200</span> Hz</div></div>
+</div>
+<div class="live-heading"><b>時間波形：0〜10 msを固定表示</b><span>橙 ━ 入力　青 ┄ 折り返し後　黒 ● 測定値</span></div>
+<svg id="aliasWave" class="live-chart" viewBox="0 0 876 176" role="img" aria-label="入力波形と折り返し後の波形、サンプリング点"></svg>
+<div class="live-heading"><b>周波数の位置：0〜3000 Hzを固定表示</b><span>赤い領域＝ナイキスト周波数より上</span></div>
+<svg id="aliasSpectrum" class="live-chart" viewBox="0 0 876 110" role="img" aria-label="入力周波数と折り返し後の周波数"></svg>
+<div class="alias-result"><b id="aliasEq" aria-live="polite"></b><span id="aliasExplain"></span></div>
+<p class="small" id="aliasNote"></p>
+<div class="note">入力を1200 Hzにして、fₛを1000→2000 Hzへ。測定点の間隔が変わり、青い波は200→800 Hzになります。<b>測定点だけでは、橙と青を区別できません。</b></div>
+<p class="small">計算：r=f mod fₛ、falias=min(r, fₛ−r)。図は振幅1・初期位相0のcos波。下図は理想的な周波数位置で、有限点FFTのピーク形状ではありません。</p>
 </section></div>
 
 <div class="frame"><section class="slide" data-page="10 / 13">
@@ -230,7 +243,6 @@ h1{font-size:47px;line-height:1.16;margin:11px 0 15px;letter-spacing:.02em}h2{fo
   </div>
   <div class="note greennote" style="margin-top:15px"><b>一番大事：</b>「測定範囲外が低周波へ化ける＝エイリアシング」と、「FFT配列後半に負周波数が並ぶ＝共役対称」は分けて考える。</div>
   <div style="margin-top:15px" class="sources"><b>参考資料（公式ドキュメント・専門書）</b><ul><li><a href="https://www.ni.com/en/shop/data-acquisition/measurement-fundamentals/analog-fundamentals/acquiring-an-analog-signal--bandwidth--nyquist-sampling-theorem-.html" target="_blank" rel="noopener">NI：Nyquist Sampling Theorem / Aliasing</a></li><li><a href="https://www.ni.com/en/shop/data-acquisition/measurement-fundamentals/analog-fundamentals/anti-aliasing-filters-and-their-usage-explained.html" target="_blank" rel="noopener">NI：Anti-Aliasing Filters</a></li><li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.fft.fft.html" target="_blank" rel="noopener">SciPy：FFT / DFT定義・負周波数の並び</a></li><li><a href="https://numpy.org/doc/stable/reference/generated/numpy.fft.fftfreq.html" target="_blank" rel="noopener">NumPy：FFT frequency bins</a></li><li><a href="https://www.dspguide.com/ch12/2.htm" target="_blank" rel="noopener">DSP Guide：FFTの分割と結合</a></li><li><a href="https://www.ni.com/en/shop/data-acquisition/measurement-fundamentals/analog-fundamentals/understanding-ffts-and-windowing.html" target="_blank" rel="noopener">NI：FFTと窓関数</a></li></ul></div>
-  <div class="footerline">検索対策：noindex / nofollow / noarchive / nosnippet を設定。※URLを知る人の閲覧を防ぐアクセス制限ではありません。</div>
 </section></div>
 
 </main>
@@ -242,8 +254,33 @@ function drawWave(id,fn,opt={}){const o=setupCanvas(id);if(!o)return;const {x,w,
 function renderWaves(){drawWave('heroWave',t=>.65*(Math.sin(2*Math.PI*3*t)+.45*Math.sin(2*Math.PI*6*t)),{color:'#2365d8'});drawWave('fundWave',t=>.65*Math.sin(2*Math.PI*3*t),{color:'#2365d8'});drawWave('secondWave',t=>.65*.45*Math.sin(2*Math.PI*6*t),{color:'#e87523'});drawWave('sumWave',t=>.65*(Math.sin(2*Math.PI*3*t)+.45*Math.sin(2*Math.PI*6*t)),{color:'#7b55c7'});drawWave('sameProduct',t=>Math.sin(2*Math.PI*4*t)*Math.sin(2*Math.PI*4*t),{color:'#1d9a68'});drawWave('diffProduct',t=>Math.sin(2*Math.PI*4*t)*Math.sin(2*Math.PI*5.2*t),{color:'#67778b'});drawWave('onePointWave',t=>Math.sin(2*Math.PI*4*t),{color:'#d34848',samples:[0,.25,.5,.75,1]});drawWave('twoPointWave',t=>Math.sin(2*Math.PI*4*t),{color:'#e87523',samples:[0,.125,.25,.375,.5,.625,.75,.875,1]});drawWave('pure100',t=>Math.sin(2*Math.PI*3*t),{color:'#2365d8'});drawWave('distorted100',t=>Math.sin(2*Math.PI*3*t)+.45*Math.sin(2*Math.PI*6*t),{color:'#e87523'});}
 let resizeTimer;window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(renderWaves,120)});setTimeout(renderWaves,20);
 function aliasFreq(f,fs){let r=((f%fs)+fs)%fs;return Math.min(r,fs-r);}
-function updateAlias(){const fs=+document.getElementById('fsRange').value,f=+document.getElementById('finRange').value,a=aliasFreq(f,fs),nyq=fs/2;document.getElementById('fsVal').textContent=fs;document.getElementById('finVal').textContent=f;document.getElementById('nyqLabel').textContent=`ナイキスト ${nyq} Hz`;document.getElementById('aliasEq').textContent=`${f} Hz → ${a} Hz`;let r=((f%fs)+fs)%fs;let explain='';if(a===0||a===nyq){explain='DCまたはナイキストに一致：振幅・位相を一意に復元できず、位相によって標本が全て0になる場合あり';}else if(f===a){explain='ナイキスト範囲内：元の周波数と一致';}else if(r<=nyq){const m=Math.floor(f/fs);explain=`${f} − ${m}×${fs} = ${r} Hz`; }else{const m=Math.floor(f/fs);explain=`まず ${f} − ${m}×${fs} = ${r} Hz、さらに ${fs} − ${r} = ${a} Hz`; }document.getElementById('aliasExplain').textContent=explain;const inputPct=Math.min(100,(r/fs)*100),aliasPct=(a/fs)*100;const inputDot=document.getElementById('inputDot'),aliasDot=document.getElementById('aliasDot'),inputLabel=document.getElementById('inputLabel'),aliasLabel=document.getElementById('aliasLabel');inputDot.style.left=inputPct+'%';inputLabel.style.left=inputPct+'%';inputLabel.textContent=`余り ${r} Hz`;aliasDot.style.left=aliasPct+'%';aliasLabel.style.left=aliasPct+'%';aliasLabel.textContent=`見える ${a} Hz`;}
+function graphLine(fn,x0,y0,w,amp,T){let d='';for(let i=0;i<=1500;i++){const t=T*i/1500;d+=(i?'L':'M')+(x0+w*i/1500).toFixed(2)+','+(y0-amp*fn(t)).toFixed(2);}return d;}
+function drawAlias(fs,f,a){
+ const x0=46,w=810,mid=77,amp=51,T=.01;
+ let wave='';for(let i=0;i<=10;i++){const x=x0+w*i/10;wave+=`<line x1="${x}" y1="18" x2="${x}" y2="137" stroke="#e4e9f1"/><text x="${x}" y="161" text-anchor="middle">${i}</text>`;}
+ for(const v of [-1,0,1])wave+=`<text x="30" y="${mid-amp*v+4}" text-anchor="end">${v}</text>`;
+ wave+=`<line x1="${x0}" y1="${mid}" x2="856" y2="${mid}" stroke="#bac6d6"/><text x="855" y="174" text-anchor="end">時間 ms</text>`;
+ wave+=`<path d="${graphLine(t=>Math.cos(2*Math.PI*f*t),x0,mid,w,amp,T)}" fill="none" stroke="#e87523" stroke-width="2.2" opacity=".85"/>`;
+ wave+=`<path d="${graphLine(t=>Math.cos(2*Math.PI*a*t),x0,mid,w,amp,T)}" fill="none" stroke="#2365d8" stroke-width="2.6" stroke-dasharray="7 4"/>`;
+ for(let n=0;n<=Math.floor(T*fs+1e-9);n++){let t=n/fs,x=x0+w*t/T,y=mid-amp*Math.cos(2*Math.PI*f*t);wave+=`<circle cx="${x}" cy="${y}" r="3.8" fill="#17243a" stroke="white" stroke-width="1"/>`;}
+ document.getElementById('aliasWave').innerHTML=`<g font-family="Arial,sans-serif" font-size="11" fill="#5e6c80">${wave}</g>`;
+ const xx=v=>110+730*v/3000,nyq=xx(fs/2);let spec=`<rect x="${nyq}" y="20" width="${840-nyq}" height="66" fill="#fff0f0"/><line x1="${nyq}" y1="17" x2="${nyq}" y2="88" stroke="#d34848" stroke-dasharray="4 3"/><text x="${nyq}" y="12" text-anchor="middle" fill="#b53535">fₛ/2 = ${fs/2} Hz</text>`;
+ for(let i=0;i<=3000;i+=500)spec+=`<line x1="${xx(i)}" y1="22" x2="${xx(i)}" y2="88" stroke="#e1e7ef"/><text x="${xx(i)}" y="104" text-anchor="middle">${i}</text>`;
+ for(const [value,y,color,label] of [[f,43,'#e87523','入力'],[a,74,'#2365d8','折り返し後']]){let px=xx(value);let anchor=value>2600?'end':'start';let offset=value>2600?-8:8;spec+=`<text x="10" y="${y+4}" fill="${color}">${label}</text><line x1="110" y1="${y}" x2="840" y2="${y}" stroke="#d5dde8"/><circle cx="${px}" cy="${y}" r="5" fill="${color}"/><text x="${px+offset}" y="${y-7}" text-anchor="${anchor}" fill="${color}">${value} Hz</text>`;}
+ document.getElementById('aliasSpectrum').innerHTML=`<g font-family="Arial,sans-serif" font-size="11" fill="#5e6c80">${spec}</g>`;
+}
+function updateAlias(){const fs=+document.getElementById('fsRange').value,f=+document.getElementById('finRange').value,a=aliasFreq(f,fs),r=f%fs;
+ for(const [id,v] of [['fsVal',fs],['finVal',f],['nyqVal',fs/2],['aliasVal',a]])document.getElementById(id).textContent=v;
+ document.getElementById('aliasEq').textContent=`${f} Hz → ${a} Hz`;
+ document.getElementById('aliasExplain').textContent=f===a?'元の周波数と一致':r<=fs/2?`${f} − ${Math.floor(f/fs)} × ${fs} = ${a} Hz`:`余り ${r} Hz → ${fs} − ${r} = ${a} Hz`;
+ document.getElementById('aliasNote').textContent=(a===0||a===fs/2)?'境界では位相情報が失われます。この図はcos波。初期位相が90°なら全ての測定値が0になる場合があります。':f<fs/2?'ナイキスト未満：橙と青の波形が重なります。':'ナイキスト超過：波形が違っても黒い測定点は一致します。';
+ drawAlias(fs,f,a);
+}
 ['fsRange','finRange'].forEach(id=>document.getElementById(id).addEventListener('input',updateAlias));updateAlias();
+
+function fitSlideContents(){document.querySelectorAll('.slide').forEach(s=>{let box=s.querySelector('.slide-content');if(!box){box=document.createElement('div');box.className='slide-content';[...s.children].filter(e=>!e.classList.contains('footerline')).forEach(e=>box.appendChild(e));s.prepend(box);}box.style.transform='none';const footer=s.querySelector('.footerline');const available=footer?footer.offsetTop-46:642;const height=box.scrollHeight;const k=Math.min(1,available/height);box.style.transform=`translateX(${(876-876*k)/2}px) scale(${k})`;});}
+fitSlideContents();if(document.fonts)document.fonts.ready.then(fitSlideContents);
+window.addEventListener('resize',()=>{fitSlideContents();renderWaves()});
 </script>
 </body>
 </html>
